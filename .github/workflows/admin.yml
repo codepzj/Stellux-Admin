@@ -1,0 +1,33 @@
+name: Admin CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [23.x] 
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Use pnpm
+      run: |
+        npm install -g pnpm
+
+    - name: pnpm install 
+      run: |
+        pnpm install
+
+    - name: pnpm build
+      run: |
+        pnpm run build

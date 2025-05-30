@@ -1,0 +1,41 @@
+:root {
+  .ant-layout-header,
+  .ant-layout-sider,
+  .ant-layout-sider-trigger {
+    @apply !bg-white !text-black border-none;
+  }
+  .ant-menu {
+    @apply !border-none;
+  }
+  .dark {
+    .ant-layout-header,
+    .ant-layout-sider,
+    .ant-layout-sider-trigger {
+      @apply !bg-[#141414] !text-white;
+    }
+  }
+}
+
+a:focus,
+a:active,
+button,
+div,
+svg,
+span {
+  outline: none;
+}
+
+/* 解决antd的动画问题 */
+:root .ant-layout-sider,
+:root .ant-tabs,
+:root .ant-input-wrapper {
+  transition-duration: 0s !important;
+  * {
+    transition-duration: 0s !important;
+  }
+}
+
+/* 移除antd的默认边框 */
+.ant-btn-default {
+  @apply !border-none;
+}
