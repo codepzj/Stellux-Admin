@@ -31,9 +31,12 @@
                       <a-menu-item @click="handleEdit(doc.id)"
                         >编辑</a-menu-item
                       >
-                      <a-menu-item @click="handleDelete(doc.id)"
-                        >删除</a-menu-item
+                      <a-popconfirm
+                        title="确定删除该文档吗？"
+                        @confirm="handleDelete(doc.id)"
                       >
+                        <a-menu-item>删除</a-menu-item>
+                      </a-popconfirm>
                     </a-menu>
                   </template>
                   <Icon
@@ -253,9 +256,14 @@ const createDoc = ref<DocumentRootRequest>({
 // 获取所有根文档
 const getAllDoc = async () => {
   loading.value = true;
-  const res = await getAllRootDocAPI();
-  docList.value = res.data;
-  loading.value = false;
+  try {
+    const res = await getAllRootDocAPI();
+    docList.value = res.data;
+  } catch (error) {
+    message.error("获取文档列表失败");
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 编辑文档
@@ -276,10 +284,10 @@ const handleEdit = (id: string) => {
 };
 
 // 删除文档
-const handleDelete = (id: string) => {
-  deleteRootDocumentAPI(id);
+const handleDelete = async (id: string) => {
+  await deleteRootDocumentAPI(id);
+  await getAllDoc();
   message.success("文档删除成功");
-  getAllDoc();
 };
 
 // 清空新增文档

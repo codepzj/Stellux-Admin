@@ -25,11 +25,11 @@
           class="w-24 text-center"
           :bordered="false"
         >
-          <a-select-option value="preview" @click="setMode('preview')">
-            <span class="text-xs">预览模式</span>
-          </a-select-option>
           <a-select-option value="edit" @click="setMode('edit')">
             <span class="text-xs">编辑模式</span>
+          </a-select-option>
+          <a-select-option value="preview" @click="setMode('preview')">
+            <span class="text-xs">预览模式</span>
           </a-select-option>
         </a-select>
       </div>

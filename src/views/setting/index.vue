@@ -26,6 +26,10 @@ const SettingOptions = ref([
     label: "博客设置",
     value: "BlogSetting",
   },
+  {
+    label: "关于设置",
+    value: "AboutSetting",
+  },
 ]);
 const defaultSetting = ref("BasicSetting");
 const route = useRoute();

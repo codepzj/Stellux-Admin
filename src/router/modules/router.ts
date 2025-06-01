@@ -129,6 +129,25 @@ export const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: "/document",
+        name: "DocumentOverview",
+        meta: {
+          title: "文档",
+          icon: () => h(Icon, { icon: "fe:document", width: 18, height: 18 }),
+        },
+        component: () => import("@/views/document/overview.vue"),
+      },
+      {
+        path: "file",
+        name: "File",
+        meta: {
+          title: "附件",
+          icon: () =>
+            h(Icon, { icon: "octicon:upload-16", width: 18, height: 18 }),
+        },
+        component: () => import("@/views/file/index.vue"),
+      },
+      {
         path: "setting",
         name: "Setting",
         meta: {
@@ -168,36 +187,14 @@ export const routes: RouteRecordRaw[] = [
               hideInSideBar: true,
             },
           },
+          {
+            path: "about",
+            component: () =>
+              import("@/views/setting/pages/AboutSetting/index.vue"),
+            name: "AboutSetting",
+            meta: { title: "关于设置", hideInSideBar: true },
+          },
         ],
-      },
-      {
-        path: "/document",
-        name: "DocumentOverview",
-        meta: {
-          title: "文档",
-          icon: () => h(Icon, { icon: "fe:document", width: 18, height: 18 }),
-        },
-        component: () => import("@/views/document/overview.vue"),
-      },
-      {
-        path: "file",
-        name: "File",
-        meta: {
-          title: "附件",
-          icon: () =>
-            h(Icon, { icon: "octicon:upload-16", width: 18, height: 18 }),
-        },
-        component: () => import("@/views/file/index.vue"),
-      },
-      {
-        path: "/test",
-        component: () => import("@/views/test/index.vue"),
-        name: "Test",
-        meta: {
-          title: "测试",
-          icon: () =>
-            h(Icon, { icon: "grommet-icons:test", width: 18, height: 18 }),
-        },
       },
     ],
   },

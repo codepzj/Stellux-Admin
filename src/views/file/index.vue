@@ -6,13 +6,17 @@
       @selected-photos="photos => (selectedPhotos = photos)"
     >
       <template #left>
-        <a-button
-          type="primary"
-          danger
-          :disabled="selectedPhotos.length === 0"
-          @click="handleDelete"
-          >删除</a-button
+        <a-popconfirm
+          title="确定删除该图片吗，请确保图片没有被使用？"
+          @confirm="handleDelete"
         >
+          <a-button
+            type="primary"
+            danger
+            :disabled="selectedPhotos.length === 0"
+            >删除</a-button
+          >
+        </a-popconfirm>
       </template>
       <template #right>
         <Uploader @close="getList" />

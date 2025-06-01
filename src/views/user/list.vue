@@ -36,9 +36,9 @@
               ok-text="确定"
               cancel-text="取消"
               @confirm="onHandleDelete(record)"
-              disabled
+              :disabled="record.id === userInfo?.id"
             >
-              <a-button type="link" size="small" danger disabled>
+              <a-button type="link" size="small" :disabled="record.id === userInfo?.id" danger>
                 删除</a-button
               >
             </a-popconfirm>
@@ -111,6 +111,10 @@ import {
 } from "@/api/user";
 import type { CreateUserReq, UpdateUserReq, UserInfoVO } from "@/types/user";
 import { roleNames, roleColors } from "@/global";
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
+const userInfo = userStore.userInfo;
 
 const userList = ref<UserInfoVO[]>([]);
 const loading = ref(false);

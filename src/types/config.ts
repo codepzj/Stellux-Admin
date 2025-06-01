@@ -20,6 +20,13 @@ export interface BlogConfig {
   blog_avatar: string; // 博客头像
   blog_title: string; // 博客标题
   blog_subtitle: string; // 博客副标题
-  blog_welcome: string; // 博客欢迎语
-  blog_motto: string; // 博客座右铭
+}
+
+export interface AboutConfig {
+  author: string;
+  avatar_url: string;
+  left_tags: string[];
+  right_tags: string[];
+  know_me: string;
+  github_username: string;
 }

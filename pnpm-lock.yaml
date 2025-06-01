@@ -56,6 +56,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      github-calendar:
+        specifier: ^2.3.4
+        version: 2.3.4
       github-markdown-css:
         specifier: ^5.8.1
         version: 5.8.1
@@ -1019,6 +1022,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  add-subtract-date@1.0.16:
+    resolution: {integrity: sha512-pmGFYgOmVhZ7R47PB/h/BLt/f77rVZL3WXvxSUWKSd6RTe7lHu7ZalQUYWJ2RXNIuv9KKZjstyuKnNQqbqtoGw==}
+
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -1516,6 +1522,10 @@ packages:
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
+  days@1.1.1:
+    resolution: {integrity: sha512-vzeIwVsEIyA35GH4+mPd4hjVDNI87wYANyZFs0BHjBr5kIBH5zEl7LfD6Wr4SFZca4D3CU9IH1w4DuZLlXzKRw==}
+    engines: {node: '>=0.10.0'}
+
   de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
 
@@ -1667,6 +1677,9 @@ packages:
 
   elkjs@0.9.3:
     resolution: {integrity: sha512-f/ZeWvW/BCXbhGEf1Ujp29EASo/lk1FDnETgNKwJrsVvGZhUWCZyg3xLJjAsxfOmt8KjswHmI5EwCQcPMpOYhQ==}
+
+  elly@1.1.11:
+    resolution: {integrity: sha512-WFKVcEKEOjdSOhNYFKWQoJDk0Sb0re6v0fIsGkePn97dmPpKM/YoOKRdYIb34T1R13KPRNzDBDmT/Flb/54NXg==}
 
   emojis-list@3.0.0:
     resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==}
@@ -1864,6 +1877,9 @@ packages:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
 
+  fillo@1.0.15:
+    resolution: {integrity: sha512-AU9+1s5J2halrmGGe9On+a8TXfbaXsY9JLz/sxPsmcISaqcGn0M9Pt6cQzKPesqdzQdSQ08JJHH5RZR9HdF2Jw==}
+
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
@@ -1899,6 +1915,9 @@ packages:
   format@0.2.2:
     resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
     engines: {node: '>=0.4.x'}
+
+  formatoid@1.2.5:
+    resolution: {integrity: sha512-ADuqDTwrQd0800jF0G6tL3mWwO8aGStjypqvrwkhTnoQc2fD1hc9reGtrMiRmWK7ti1n2NUfy+6WKfJ+AJUsvA==}
 
   fragment-cache@0.2.1:
     resolution: {integrity: sha512-GMBAbW9antB8iZRHLoGw0b3HANt57diZYFO/HL1JGIC1MjKrdmhxvrJbupnVvpys0zsz7yBApXdQyfepKly2kA==}
@@ -1945,6 +1964,15 @@ packages:
   giget@2.0.0:
     resolution: {integrity: sha512-L5bGsVkxJbJgdnwyuheIunkGatUF/zssUoxxjACCseZYAVbaqdh9Tsmmlkl8vYan09H7sbvKt4pS8GqKLBrEzA==}
     hasBin: true
+
+  github-calendar-legend@1.0.12:
+    resolution: {integrity: sha512-dVsVt22egxG3VEkJdQTdgphQkDj4FyQ1Sen4o4GteEz4SA7s2rX9j2fDR46fZaPLU8IXfL4Ig0h3z/zmb6ORWA==}
+
+  github-calendar-parser@1.2.3:
+    resolution: {integrity: sha512-yd7GcKibU01nfD82h5dxLVUOaNDySABhYN/Y29OP1p03h38UpJxy23qe2hheIHbtZAwvQ15ErPAapgVGXmbYnQ==}
+
+  github-calendar@2.3.4:
+    resolution: {integrity: sha512-B2szQw0xVOluHYeuamkVtJXCHk5TaVyPjw2z4ynfnGlQ/jr2cb66SPgeNDcDHlGONOipQccWxv/VNVN5Gqr14A==}
 
   github-markdown-css@5.8.1:
     resolution: {integrity: sha512-8G+PFvqigBQSWLQjyzgpa2ThD9bo7+kDsriUIidGcRhXgmcaAWUIpCZf8DavJgc+xifjbCG+GvMyWr0XMXmc7g==}
@@ -2303,6 +2331,9 @@ packages:
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
+
+  iterate-object@1.3.5:
+    resolution: {integrity: sha512-eL23u8oFooYTq6TtJKjp2RYjZnCkUYQvC0T/6fJfWykXJ3quvdDdzKZ3CEjy8b3JGOvLTjDYMEMIp5243R906A==}
 
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
@@ -2704,6 +2735,10 @@ packages:
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
 
+  months@1.2.0:
+    resolution: {integrity: sha512-zFM7hUpziSYGk2DNObYGWgHdRRxAOgjl8CC1Rbl50p/q0rGDsREfk0nbxxmSIquVi/lEAuUY8nwbwkZ8biNCOQ==}
+    engines: {node: '>=0.10.0'}
+
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -2809,6 +2844,9 @@ packages:
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
+
+  parse-it@1.0.11:
+    resolution: {integrity: sha512-1OWDPQNF7eUxkqPdP4vFu96QnVwQjy2zag5CZcF3Ipd12s1iu8nPpgNBsda0tgZlj04vSrIZ5DQr2bqp5Cn6UQ==}
 
   parse5@6.0.1:
     resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
@@ -2969,6 +3007,9 @@ packages:
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
     engines: {node: '>= 0.4'}
+
+  regex-escape@3.4.11:
+    resolution: {integrity: sha512-051l4Hl/0HoJwTvNztrWVjoxLiseSfCrDgWqwR1cnGM/nyQSeIjmvti5zZ7HzOmsXDPaJ2k0iFxQ6/WNpJD5wQ==}
 
   regex-not@1.0.2:
     resolution: {integrity: sha512-J6SDjUgDxQj5NusnOtdFxDwN/+HWykR8GELwctJ7mdqhcyy1xEc4SRFHUXvxTp661YaVKAjfRLZ9cCqS6tn32A==}
@@ -3142,6 +3183,9 @@ packages:
   side-channel@1.1.0:
     resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
     engines: {node: '>= 0.4'}
+
+  sliced@1.0.1:
+    resolution: {integrity: sha512-VZBmZP8WU3sMOZm1bdgTadsQbcscK0UM8oKxKVBs4XAhUo2Xxzm/OFMGBkPusxw9xL3Uy8LrzEqGqJhclsr0yA==}
 
   snapdragon-node@2.1.1:
     resolution: {integrity: sha512-O27l4xaMYt/RSQ5TR3vpWCAB5Kb/czIcqUFOM/C4fYcLnbZUc1PkjTAMjof2pBWaSTwOUd6qUHcFGVGj7aIwnw==}
@@ -4493,6 +4537,8 @@ snapshots:
 
   acorn@8.14.1: {}
 
+  add-subtract-date@1.0.16: {}
+
   agent-base@6.0.2:
     dependencies:
       debug: 4.4.0
@@ -5103,6 +5149,8 @@ snapshots:
 
   dayjs@1.11.13: {}
 
+  days@1.1.1: {}
+
   de-indent@1.0.2: {}
 
   debug@2.6.9:
@@ -5244,6 +5292,11 @@ snapshots:
     optional: true
 
   elkjs@0.9.3: {}
+
+  elly@1.1.11:
+    dependencies:
+      iterate-object: 1.3.5
+      sliced: 1.0.1
 
   emojis-list@3.0.0: {}
 
@@ -5548,6 +5601,8 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
+  fillo@1.0.15: {}
+
   find-up@5.0.0:
     dependencies:
       locate-path: 6.0.0
@@ -5576,6 +5631,13 @@ snapshots:
       mime-types: 2.1.35
 
   format@0.2.2: {}
+
+  formatoid@1.2.5:
+    dependencies:
+      days: 1.1.1
+      fillo: 1.0.15
+      months: 1.2.0
+      parse-it: 1.0.11
 
   fragment-cache@0.2.1:
     dependencies:
@@ -5639,6 +5701,19 @@ snapshots:
       node-fetch-native: 1.6.6
       nypm: 0.6.0
       pathe: 2.0.3
+
+  github-calendar-legend@1.0.12: {}
+
+  github-calendar-parser@1.2.3:
+    dependencies:
+      github-calendar-legend: 1.0.12
+
+  github-calendar@2.3.4:
+    dependencies:
+      add-subtract-date: 1.0.16
+      elly: 1.1.11
+      formatoid: 1.2.5
+      github-calendar-parser: 1.2.3
 
   github-markdown-css@5.8.1: {}
 
@@ -6015,6 +6090,8 @@ snapshots:
       isarray: 1.0.0
 
   isobject@3.0.1: {}
+
+  iterate-object@1.3.5: {}
 
   jiti@2.4.2: {}
 
@@ -6633,6 +6710,8 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.1
 
+  months@1.2.0: {}
+
   mri@1.2.0: {}
 
   ms@2.0.0: {}
@@ -6745,6 +6824,10 @@ snapshots:
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
+
+  parse-it@1.0.11:
+    dependencies:
+      regex-escape: 3.4.11
 
   parse5@6.0.1: {}
 
@@ -6899,6 +6982,8 @@ snapshots:
       get-intrinsic: 1.3.0
       get-proto: 1.0.1
       which-builtin-type: 1.2.1
+
+  regex-escape@3.4.11: {}
 
   regex-not@1.0.2:
     dependencies:
@@ -7145,6 +7230,8 @@ snapshots:
       side-channel-list: 1.0.0
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
+
+  sliced@1.0.1: {}
 
   snapdragon-node@2.1.1:
     dependencies:

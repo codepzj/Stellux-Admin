@@ -32,6 +32,7 @@
                 @select="onHandleSelect"
                 block-node
                 show-icon
+                draggable
               >
                 <template #title="{ title, key }">
                   <a-dropdown :trigger="['contextmenu']">
@@ -96,7 +97,7 @@
           <template #right-content>
             <a-skeleton active v-if="loading" />
             <div v-else>
-              <div class="pr-2.5">
+              <div v-if="selectedKeys.length && isLeaf(selectedKeys[0])" class="pr-2.5">
                 <DocumentDetail
                   class="mt-3"
                   v-model:content="documentDetail.content"

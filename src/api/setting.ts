@@ -1,4 +1,4 @@
-import type { BasicConfig, BlogConfig, SeoConfig } from "@/types/config";
+import type { AboutConfig, BasicConfig, BlogConfig, SeoConfig } from "@/types/config";
 import request from "@/utils/request";
 import type { Response } from "@/types/dto";
 
@@ -49,6 +49,24 @@ export const adminUpsertBlogSettingAPI: (
 export const getBlogSettingAPI: () => Promise<Response<BlogConfig>> = () => {
   return request({
     url: "/setting/blog",
+    method: "GET",
+  });
+};
+
+
+export const adminUpsertAboutSettingAPI: (
+  data: AboutConfig
+) => Promise<any> = data => {
+  return request({
+    url: "/admin-api/setting/upsert/about",
+    method: "POST",
+    data,
+  });
+};
+
+export const getAboutSettingAPI: () => Promise<Response<AboutConfig>> = () => {
+  return request({
+    url: "/setting/about",
     method: "GET",
   });
 };
