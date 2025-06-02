@@ -6,8 +6,6 @@ import {
 
 import Layout from "@/layout/index.vue";
 import Dashboard from "@/views/dashboard/index.vue";
-import PostCreate from "@/views/post/create.vue";
-import PostEdit from "@/views/post/edit.vue";
 import Login from "@/views/auth/login.vue";
 
 import { Icon } from "@iconify/vue";
@@ -80,7 +78,7 @@ export const routes: RouteRecordRaw[] = [
         children: [
           {
             path: "create",
-            component: PostCreate,
+            component: () => import("@/views/post/create.vue"),
             name: "PostCreate",
             meta: {
               title: "发布文章",
@@ -89,7 +87,7 @@ export const routes: RouteRecordRaw[] = [
           },
           {
             path: "edit/:id",
-            component: PostEdit,
+            component: () => import("@/views/post/edit.vue"),
             name: "PostEdit",
             meta: {
               title: "编辑文章",
