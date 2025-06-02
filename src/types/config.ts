@@ -30,3 +30,10 @@ export interface AboutConfig {
   know_me: string;
   github_username: string;
 }
+
+type CommentType = "forbidden" | "post" | "doc" | "all";
+
+export interface CommentConfig {
+  env_id: string;
+  allow_comment_type: CommentType;
+}

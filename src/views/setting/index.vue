@@ -30,6 +30,10 @@ const SettingOptions = ref([
     label: "关于设置",
     value: "AboutSetting",
   },
+  {
+    label: "评论设置",
+    value: "CommentSetting",
+  },
 ]);
 const defaultSetting = ref("BasicSetting");
 const route = useRoute();

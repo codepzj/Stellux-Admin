@@ -194,6 +194,13 @@ export const routes: RouteRecordRaw[] = [
             name: "AboutSetting",
             meta: { title: "关于设置", hideInSideBar: true },
           },
+          {
+            path: "comment",
+            component: () =>
+              import("@/views/setting/pages/CommentSetting/index.vue"),
+            name: "CommentSetting",
+            meta: { title: "评论设置", hideInSideBar: true },
+          },
         ],
       },
     ],
