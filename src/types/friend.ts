@@ -5,7 +5,7 @@ export interface FriendVO {
   site_url: string;
   avatar_url: string;
   website_type: string;
-  isActive: boolean;
+  is_active: boolean;
 }
 
 export interface FriendCreateReq {
@@ -14,4 +14,14 @@ export interface FriendCreateReq {
   site_url: string;
   avatar_url: string;
   website_type: string;
+}
+
+export interface FriendUpdateReq {
+  id: string;
+  name: string;
+  description: string;
+  site_url: string;
+  avatar_url: string;
+  website_type: string;
+  is_active: boolean;
 }
