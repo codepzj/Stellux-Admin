@@ -29,7 +29,9 @@
           <a-avatar :src="record.avatar_url" />
         </template>
         <template v-else-if="column.key === 'website_type'">
-          <span>{{ record.website_type }}</span>
+          <a-tag :color="websiteTypeOptions.find(item => item.value == record.website_type)?.color">
+            {{ websiteTypeOptions.find(item => item.value == record.website_type)?.label }}
+          </a-tag>
         </template>
         <template v-else-if="column.key === 'is_active'">
           <a-tag :color="record.is_active ? 'green' : 'red'">
@@ -77,7 +79,7 @@
           <a-input v-model:value="createForm.avatar_url" />
         </a-form-item>
         <a-form-item label="网站类型" name="website_type">
-          <a-input v-model:value="createForm.website_type" />
+          <a-select v-model:value="createForm.website_type" :options="websiteTypeOptions" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -98,7 +100,7 @@
           <a-input v-model:value="editForm.avatar_url" />
         </a-form-item>
         <a-form-item label="网站类型" name="website_type">
-          <a-input v-model:value="editForm.website_type" />
+          <a-select v-model:value="editForm.website_type" :options="websiteTypeOptions" />
         </a-form-item>
         <a-form-item label="是否激活" name="is_active">
           <a-switch v-model:checked="editForm.is_active" />
@@ -109,7 +111,8 @@
 </template>
 
 <script setup lang="ts">
-import { message, type FormInstance, type Rule } from "ant-design-vue";
+import { message, type FormInstance } from "ant-design-vue";
+import type { Rule } from "ant-design-vue/es/form";
 import {
   createFriendAPI,
   getAllFriendAPI,
@@ -121,6 +124,13 @@ import type {
   FriendCreateReq,
   FriendUpdateReq,
 } from "@/types/friend";
+
+const websiteTypeOptions = [
+  { label: "大佬", value: 0, color: "blue" },
+  { label: "技术型", value: 1, color: "green" },
+  { label: "设计型", value: 2, color: "purple" },
+  { label: "生活型", value: 3, color: "orange" },
+];
 
 // 数据列表和加载状态
 const friendList = ref<FriendVO[]>([]);
@@ -174,7 +184,7 @@ const createForm = ref<FriendCreateReq>({
   description: "",
   site_url: "",
   avatar_url: "",
-  website_type: "",
+  website_type: 0,
 });
 
 const onHandleCreate = () => {
@@ -183,7 +193,7 @@ const onHandleCreate = () => {
     description: "",
     site_url: "",
     avatar_url: "",
-    website_type: "",
+    website_type: 0,
   };
   createModalOpen.value = true;
 };
@@ -197,7 +207,6 @@ const handleCreateOk = async () => {
 };
 
 // 编辑逻辑
-
 const editModalOpen = ref(false);
 const editFormRef = ref<FormInstance>();
 const editForm = ref<FriendUpdateReq>({
@@ -206,7 +215,7 @@ const editForm = ref<FriendUpdateReq>({
   description: "",
   site_url: "",
   avatar_url: "",
-  website_type: "",
+  website_type: 0,
   is_active: true,
 });
 

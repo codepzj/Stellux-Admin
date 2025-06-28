@@ -10,7 +10,7 @@ import type { Response } from "@/types/dto";
 export const createFriendAPI = (
   data: FriendCreateReq
 ): Promise<Response<any>> => {
-  return request.post("/friend/create", data);
+  return request.post("/admin-api/friend/create", data);
 };
 
 /**
@@ -18,7 +18,7 @@ export const createFriendAPI = (
  * @returns 所有好友
  */
 export const getAllFriendAPI = (): Promise<Response<FriendVO[]>> => {
-  return request.get("/friend/all");
+  return request.get("/admin-api/friend/all");
 };
 
 /**
@@ -29,7 +29,7 @@ export const getAllFriendAPI = (): Promise<Response<FriendVO[]>> => {
 export const updateFriendAPI = (
   data: FriendUpdateReq
 ): Promise<Response<any>> => {
-  return request.put("/friend/update", data);
+  return request.put("/admin-api/friend/update", data);
 };
 
 /**
@@ -38,5 +38,5 @@ export const updateFriendAPI = (
  * @returns 删除结果
  */
 export const deleteFriendAPI = (id: string): Promise<Response<any>> => {
-  return request.delete(`/friend/delete/${id}`);
+  return request.delete(`/admin-api/friend/delete/${id}`);
 };
