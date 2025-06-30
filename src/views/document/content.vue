@@ -97,7 +97,10 @@
           <template #right-content>
             <a-skeleton active v-if="loading" />
             <div v-else>
-              <div v-if="selectedKeys.length && isLeaf(selectedKeys[0])" class="pr-2.5">
+              <div
+                v-if="selectedKeys.length && isLeaf(selectedKeys[0])"
+                class="pr-2.5"
+              >
                 <DocumentDetail
                   class="mt-3"
                   v-model:content="documentDetail.content"
@@ -223,7 +226,7 @@ const originDocument = ref({
 const createModal = reactive({
   visible: false,
   title: "",
-  type: "", 
+  type: "",
   parent_id: "",
   document_id: "",
   input: "",
@@ -233,7 +236,7 @@ const createModal = reactive({
 const createFileOrFolderModal = reactive({
   visible: false,
   title: "",
-  type: "", 
+  type: "",
   document_id: "",
   parent_id: "",
   input: "",
@@ -330,12 +333,11 @@ const getDocumentTree = async (id: string) => {
   selectTreeData.value = convertToSelectTree(docTreeData.value);
   selectTreeData.value = filterTree(selectTreeData.value);
   console.log(selectTreeData.value);
-  selectTreeData.value=[{
-    label: "根目录",
-    value: id,
-      children: [
-        ...selectTreeData.value,
-      ],
+  selectTreeData.value = [
+    {
+      label: "根目录",
+      value: id,
+      children: [...selectTreeData.value],
     },
   ];
   loading.value = false;

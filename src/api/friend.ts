@@ -1,4 +1,8 @@
-import type { FriendCreateReq, FriendUpdateReq, FriendVO } from "@/types/friend";
+import type {
+  FriendCreateReq,
+  FriendUpdateReq,
+  FriendVO,
+} from "@/types/friend";
 import request from "@/utils/request";
 import type { Response } from "@/types/dto";
 

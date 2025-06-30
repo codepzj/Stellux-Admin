@@ -14,9 +14,7 @@
       <a-layout-header class="!h-12 !px-0">
         <Header />
       </a-layout-header>
-      <a-layout-content
-        class="p-4 overflow-y-auto overflow-x-hidden"
-      >
+      <a-layout-content class="p-4 overflow-y-auto overflow-x-hidden">
         <Main />
       </a-layout-content>
     </a-layout>

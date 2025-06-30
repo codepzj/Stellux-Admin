@@ -29,8 +29,16 @@
           <a-avatar :src="record.avatar_url" />
         </template>
         <template v-else-if="column.key === 'website_type'">
-          <a-tag :color="websiteTypeOptions.find(item => item.value == record.website_type)?.color">
-            {{ websiteTypeOptions.find(item => item.value == record.website_type)?.label }}
+          <a-tag
+            :color="
+              websiteTypeOptions.find(item => item.value == record.website_type)
+                ?.color
+            "
+          >
+            {{
+              websiteTypeOptions.find(item => item.value == record.website_type)
+                ?.label
+            }}
           </a-tag>
         </template>
         <template v-else-if="column.key === 'is_active'">
@@ -79,7 +87,10 @@
           <a-input v-model:value="createForm.avatar_url" />
         </a-form-item>
         <a-form-item label="网站类型" name="website_type">
-          <a-select v-model:value="createForm.website_type" :options="websiteTypeOptions" />
+          <a-select
+            v-model:value="createForm.website_type"
+            :options="websiteTypeOptions"
+          />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -100,7 +111,10 @@
           <a-input v-model:value="editForm.avatar_url" />
         </a-form-item>
         <a-form-item label="网站类型" name="website_type">
-          <a-select v-model:value="editForm.website_type" :options="websiteTypeOptions" />
+          <a-select
+            v-model:value="editForm.website_type"
+            :options="websiteTypeOptions"
+          />
         </a-form-item>
         <a-form-item label="是否激活" name="is_active">
           <a-switch v-model:checked="editForm.is_active" />

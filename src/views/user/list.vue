@@ -38,7 +38,12 @@
               @confirm="onHandleDelete(record)"
               :disabled="record.id === userInfo?.id"
             >
-              <a-button type="link" size="small" :disabled="record.id === userInfo?.id" danger>
+              <a-button
+                type="link"
+                size="small"
+                :disabled="record.id === userInfo?.id"
+                danger
+              >
                 删除</a-button
               >
             </a-popconfirm>

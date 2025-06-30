@@ -162,53 +162,6 @@ export const routes: RouteRecordRaw[] = [
           icon: () => h(Icon, { icon: "uil:setting", width: 18, height: 18 }),
         },
         component: () => import("@/views/setting/index.vue"),
-        redirect: { name: "BasicSetting" },
-        children: [
-          {
-            path: "basic",
-            component: () =>
-              import("@/views/setting/pages/BasicSetting/index.vue"),
-            name: "BasicSetting",
-            meta: {
-              title: "基本设置",
-              hideInSideBar: true,
-            },
-          },
-          {
-            path: "seo",
-            component: () =>
-              import("@/views/setting/pages/SeoSetting/index.vue"),
-            name: "SEOSetting",
-            meta: {
-              title: "SEO设置",
-              hideInSideBar: true,
-            },
-          },
-          {
-            path: "blog",
-            component: () =>
-              import("@/views/setting/pages/BlogSetting/index.vue"),
-            name: "BlogSetting",
-            meta: {
-              title: "博客设置",
-              hideInSideBar: true,
-            },
-          },
-          {
-            path: "about",
-            component: () =>
-              import("@/views/setting/pages/AboutSetting/index.vue"),
-            name: "AboutSetting",
-            meta: { title: "关于设置", hideInSideBar: true },
-          },
-          {
-            path: "comment",
-            component: () =>
-              import("@/views/setting/pages/CommentSetting/index.vue"),
-            name: "CommentSetting",
-            meta: { title: "评论设置", hideInSideBar: true },
-          },
-        ],
       },
     ],
   },

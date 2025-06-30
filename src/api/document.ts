@@ -32,9 +32,7 @@ export const editRootDocumentAPI = (
 };
 
 // 删除根文档
-export const deleteRootDocumentAPI = (
-  id: string
-): Promise<Response<any>> => {
+export const deleteRootDocumentAPI = (id: string): Promise<Response<any>> => {
   return request.delete(`/admin-api/document/delete-root/${id}`);
 };
 

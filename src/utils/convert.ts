@@ -14,7 +14,11 @@ export function convertToTreeData(
   data.forEach(item => {
     const node = map.get(item.id);
     const parent = map.get(item.parent_id);
-    parent ? parent.children.push(node) : roots.push(node);
+    if (parent) {
+      parent.children.push(node);
+    } else {
+      roots.push(node);
+    }
   });
 
   return roots;

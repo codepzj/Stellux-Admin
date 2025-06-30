@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { getAboutSettingAPI } from "@/api/setting";
+import { getSettingConfigAPI } from "@/api/setting";
 import { getGithubReadmeAPI } from "@/api/dashboard";
 import type { AboutConfig } from "@/types/config";
 
@@ -39,7 +39,7 @@ const readme = ref("");
 const loading = ref(true);
 
 onMounted(async () => {
-  const res = await getAboutSettingAPI();
+  const res = await getSettingConfigAPI();
   data.value = res.data;
 
   if (data.value.github_username) {

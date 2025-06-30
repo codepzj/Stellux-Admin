@@ -2,10 +2,7 @@
   <div>
     <a-input v-model:value="url">
       <template #addonAfter>
-        <div
-          class="flex items-center justify-center"
-          @click="open = true"
-        >
+        <div class="flex items-center justify-center" @click="open = true">
           <Icon icon="fontisto:picture" class="cursor-pointer" />
         </div>
       </template>
@@ -34,5 +31,5 @@ const open = ref(false);
 const onSelectedPicture = (picture: string) => {
   url.value = picture;
   open.value = false;
-}
+};
 </script>

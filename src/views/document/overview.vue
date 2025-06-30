@@ -212,8 +212,17 @@
 </template>
 
 <script setup lang="ts">
-import { createRootDocumentAPI, deleteRootDocumentAPI, editRootDocumentAPI, getAllRootDocAPI } from "@/api/document";
-import type { DocumentRootEditRequest, DocumentRootRequest, DocumentRootVO } from "@/types/document";
+import {
+  createRootDocumentAPI,
+  deleteRootDocumentAPI,
+  editRootDocumentAPI,
+  getAllRootDocAPI,
+} from "@/api/document";
+import type {
+  DocumentRootEditRequest,
+  DocumentRootRequest,
+  DocumentRootVO,
+} from "@/types/document";
 import { message } from "ant-design-vue";
 import { CloseOutlined } from "@ant-design/icons-vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";

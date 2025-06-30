@@ -1,7 +1,11 @@
 <template>
   <div class="h-full">
     <div class="h-full">
-      <MdWriter v-if="documentStore.mode === 'edit'" v-model:content="content" mode="auto" />
+      <MdWriter
+        v-if="documentStore.mode === 'edit'"
+        v-model:content="content"
+        mode="auto"
+      />
       <MdViewer v-else :content="content" />
     </div>
   </div>
