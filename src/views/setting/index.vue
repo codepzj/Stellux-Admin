@@ -33,6 +33,16 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :sm="12">
+          <a-form-item label="站点作者" name="siteAuthor">
+            <a-input v-model:value="siteConfigForm.siteAuthor" />
+          </a-form-item>
+        </a-col>
+        <a-col :xs="24" :sm="12">
+          <a-form-item label="站点打字机文本" name="siteAnimateText">
+            <a-input v-model:value="siteConfigForm.siteAnimateText" />
+          </a-form-item>
+        </a-col>
+        <a-col :xs="24" :sm="12">
           <a-form-item label="站点描述" name="siteDescription">
             <a-input v-model:value="siteConfigForm.siteDescription" />
           </a-form-item>
@@ -72,8 +82,11 @@
 
 <script setup lang="ts">
 import { message, type FormInstance } from "ant-design-vue";
-import { adminUpsertSettingAPI, getSettingConfigAPI } from "@/api/setting";
-import type { SettingConfigDTO } from "@/types/setting";
+import {
+  adminUpsertSettingAPI,
+  getSettingConfigAPI,
+  type SettingConfigDTO,
+} from "@/api/setting";
 
 const loading = ref(false);
 const siteConfigForm = ref<SettingConfigDTO>({
@@ -82,6 +95,8 @@ const siteConfigForm = ref<SettingConfigDTO>({
   siteUrl: "",
   siteFavicon: "",
   siteAvatar: "",
+  siteAuthor: "",
+  siteAnimateText: "",
   siteDescription: "",
   siteKeywords: "",
   siteCopyright: "",
@@ -101,6 +116,9 @@ const siteConfigRules = ref<Record<string, any[]>>({
   ],
   siteAvatar: [
     { required: true, message: "请输入站点头像", trigger: "change" },
+  ],
+  siteAnimateText: [
+    { required: true, message: "请输入站点打字机文本", trigger: "change" },
   ],
   siteDescription: [
     { required: true, message: "请输入站点描述", trigger: "change" },
