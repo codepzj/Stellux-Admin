@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full bg-white dark:bg-[#141414]">
-    <div class="h-14">
+    <div class="h-8">
       <DocumentHeader />
     </div>
     <div class="overflow-hidden h-full">

@@ -10,7 +10,7 @@
                   class="cursor-pointer"
                   icon="ant-design:file-add-outlined"
                   height="18"
-                  @click="openCreateFileOrFolderModal('leaf', document_id)"
+                  @click="openCreateFileOrFolderModal('file', document_id)"
                 />
               </a-tooltip>
               <a-tooltip title="新增目录">
@@ -18,7 +18,7 @@
                   class="cursor-pointer"
                   icon="ant-design:folder-add-outlined"
                   height="20"
-                  @click="openCreateFileOrFolderModal('parent', document_id)"
+                  @click="openCreateFileOrFolderModal('dir', document_id)"
                 />
               </a-tooltip>
             </div>
@@ -26,30 +26,30 @@
             <a-spin class="w-full mx-auto" :spinning="loading">
               <a-tree
                 v-if="treeData?.length"
+                class="!mt-4"
                 v-model:expandedKeys="expandedKeys"
                 v-model:selectedKeys="selectedKeys"
                 :tree-data="treeData"
                 @select="onHandleSelect"
                 block-node
                 show-icon
-                draggable
               >
                 <template #title="{ title, key }">
                   <a-dropdown :trigger="['contextmenu']">
                     <div class="cursor-pointer w-full m-1">{{ title }}</div>
                     <template #overlay>
-                      <a-menu v-if="isParent(key)">
-                        <a-menu-item key="1" @click="handleRenameModalOpen(key)"
-                          >重命名</a-menu-item
+                      <a-menu v-if="isDir(key)">
+                        <a-menu-item key="1" @click="handleEditModalOpen(key)"
+                          >编辑</a-menu-item
                         >
                         <a-menu-item
                           key="2"
-                          @click="openCreateModal('parent', key, document_id)"
+                          @click="openCreateModal('dir', key, document_id)"
                           >新增目录</a-menu-item
                         >
                         <a-menu-item
                           key="3"
-                          @click="openCreateModal('leaf', key, document_id)"
+                          @click="openCreateModal('file', key, document_id)"
                           >新增文档</a-menu-item
                         >
                         <a-menu-item key="4" @click="deleteDocumentParent(key)"
@@ -57,8 +57,8 @@
                         >
                       </a-menu>
                       <a-menu v-else>
-                        <a-menu-item key="1" @click="handleRenameModalOpen(key)"
-                          >重命名</a-menu-item
+                        <a-menu-item key="1" @click="handleEditModalOpen(key)"
+                          >编辑</a-menu-item
                         >
                         <a-menu-item key="2" @click="deleteDocumentLeaf(key)"
                           >删除文档</a-menu-item
@@ -70,7 +70,7 @@
 
                 <template #switcherIcon="{ dataRef, expanded }">
                   <SvgIcon
-                    v-if="isParent(dataRef.key)"
+                    v-if="isDir(dataRef.key)"
                     :size="expanded ? 18 : 16"
                     :name="expanded ? 'folder-open' : 'folder'"
                     class="cursor-pointer"
@@ -78,13 +78,12 @@
                 </template>
 
                 <template #icon="{ key }">
-                  <template v-if="isLeaf(key)">
+                  <template v-if="isFile(key)">
                     <SvgIcon :size="16" name="md" />
                   </template>
                   <template
                     v-if="
-                      isParent(key) &&
-                      getChildrenLengthByKey(treeData, key) === 0
+                      isDir(key) && getChildrenLengthByKey(treeData, key) === 0
                     "
                   >
                     <SvgIcon :size="16" name="folder" />
@@ -96,15 +95,61 @@
 
           <template #right-content>
             <a-skeleton active v-if="loading" />
-            <div v-else>
+            <div v-else class="h-full">
+              <!-- 调试信息 -->
               <div
-                v-if="selectedKeys.length && isLeaf(selectedKeys[0])"
-                class="pr-2.5"
+                v-if="selectedKeys.length === 0"
+                class="flex items-center justify-center h-full text-gray-500"
               >
-                <DocumentDetail
-                  class="mt-3"
-                  v-model:content="documentDetail.content"
+                <div class="text-center">
+                  <Icon
+                    icon="ant-design:file-text-outlined"
+                    class="text-4xl mb-2"
+                  />
+                  <p>请选择一个文档进行编辑</p>
+                </div>
+              </div>
+
+              <!-- 目录节点提示 -->
+              <div
+                v-else-if="selectedKeys.length > 0 && isDir(selectedKeys[0])"
+                class="flex items-center justify-center h-full text-gray-500"
+              >
+                <div class="text-center">
+                  <Icon
+                    icon="ant-design:folder-outlined"
+                    class="text-4xl mb-2"
+                  />
+                  <p>这是一个目录，请选择具体的文档进行编辑</p>
+                </div>
+              </div>
+
+              <!-- 文档编辑器 -->
+              <div
+                v-else-if="
+                  selectedKeys.length > 0 &&
+                  isFile(selectedKeys[0]) &&
+                  documentDetail
+                "
+                class="h-full pr-2.5"
+              >
+                <DocumentContentDetail
+                  class="h-full"
+                  :document-content="documentDetail"
+                  @update="handleDocumentUpdate"
                 />
+              </div>
+
+              <!-- 加载中状态 -->
+              <div
+                v-else-if="
+                  selectedKeys.length > 0 &&
+                  isFile(selectedKeys[0]) &&
+                  !documentDetail
+                "
+                class="flex items-center justify-center h-full"
+              >
+                <a-spin size="large" />
               </div>
             </div>
           </template>
@@ -112,84 +157,72 @@
       </div>
     </a-card>
 
+    <!-- 新增文档/目录弹窗 -->
     <a-modal
-      v-model:open="createModal.visible"
+      :open="createModal.visible"
       :title="createModal.title"
       @ok="handleCreate"
+      @cancel="createModal.visible = false"
       ok-text="创建"
       cancel-text="取消"
+      width="800px"
     >
-      <div class="flex flex-col gap-2 py-4">
-        <a-input
-          v-model:value="createModal.input"
-          placeholder="请输入标题"
-          @keyup.enter="handleCreate"
-        />
-      </div>
+      <DocumentContentForm
+        ref="createFormRef"
+        :document_id="createModal.document_id"
+        :parent_id="createModal.parent_id"
+        :is_dir="createModal.type === 'dir'"
+        :parent_tree_data="getParentTreeData(treeData)"
+      />
     </a-modal>
 
+    <!-- 新增文档/目录[根级别]弹窗 -->
     <a-modal
-      v-model:open="renameDocumentModal.visible"
-      title="重命名"
-      @ok="handleRename"
-      ok-text="确认"
-      cancel-text="取消"
-    >
-      <div class="flex flex-col gap-2 py-4">
-        <a-input
-          v-model:value="renameDocumentModal.title"
-          placeholder="请输入标题"
-          @keyup.enter="handleRename"
-        />
-      </div>
-    </a-modal>
-
-    <a-modal
-      v-model:open="createFileOrFolderModal.visible"
+      :open="createFileOrFolderModal.visible"
       :title="createFileOrFolderModal.title"
       @ok="handleCreateFileOrFolder"
       @cancel="createFileOrFolderModal.visible = false"
+      width="800px"
     >
-      <div class="flex flex-col gap-2 py-4">
-        <a-input
-          v-model:value="createFileOrFolderModal.input"
-          placeholder="请输入标题"
-        />
-        <a-tree-select
-          v-model:value="createFileOrFolderModal.parent_id"
-          :tree-data="selectTreeData"
-          placeholder="请选择父目录"
-          allow-clear
-          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-          tree-default-expand-all
-        />
-      </div>
+      <DocumentContentForm
+        ref="createFileOrFolderFormRef"
+        :document_id="createFileOrFolderModal.document_id"
+        :parent_id="createFileOrFolderModal.parent_id"
+        :is_dir="createFileOrFolderModal.type === 'dir'"
+        :parent_tree_data="getParentTreeData(treeData)"
+      />
     </a-modal>
+
+    <!-- 编辑文档信息弹窗 -->
+    <DocumentEditModal
+      :visible="editModal.visible"
+      :document-content="editModal.documentContent"
+      @update:visible="editModal.visible = $event"
+      @success="handleEditSuccess"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, nextTick, computed, watchEffect } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { message, type TreeProps } from "ant-design-vue";
 import { Icon } from "@iconify/vue";
 
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import SplitPanel from "@/components/SplitPanel/index.vue";
-import DocumentDetail from "./components/DocumentDetail.vue";
+import DocumentContentDetail from "./components/DocumentContentDetail.vue";
+import DocumentContentForm from "./components/DocumentContentForm.vue";
+import DocumentEditModal from "./components/DocumentEditModal.vue";
 
 import {
-  createDocumentAPI,
   deleteDocumentByIDListAPI,
-  deleteDocumentLeafByIDAPI,
-  getAllParentDocAPI,
-  getDocumentByIDAPI,
-  getDocumentTreeByIDAPI,
-  renameDocumentAPI,
-  saveDocumentAPI,
+  deleteDocumentContentAPI,
+  getDocumentContentByDocumentIdAPI,
+  getDocumentContentAPI,
+  getDocumentTreeDataAPI,
 } from "@/api/document";
 
-import { useDocumentStore } from "@/store/modules/document";
 import {
   convertToTreeData,
   getChildrenLengthByKey,
@@ -198,7 +231,7 @@ import {
   convertToSelectTree,
 } from "@/utils/convert";
 
-import type { DocumentRequest, DocumentTreeVO } from "@/types/document";
+import type { DocumentTreeVO, DocumentContentVO } from "@/types/document";
 
 const route = useRoute();
 const document_id = ref(route.params.id as string);
@@ -209,19 +242,9 @@ const loading = ref(true);
 const docTreeData = ref<DocumentTreeVO[]>([]);
 const treeData = ref<TreeProps["treeData"]>([]);
 const selectTreeData = ref<TreeNode[]>([]);
-const documentStore = useDocumentStore();
 
-const documentDetail = ref({
-  id: document_id.value,
-  title: "",
-  content: "",
-});
-
-const originDocument = ref({
-  id: document_id.value,
-  title: "",
-  content: "",
-});
+const documentDetail = ref<DocumentContentVO | undefined>();
+const originDocument = ref<DocumentContentVO | undefined>();
 
 const createModal = reactive({
   visible: false,
@@ -242,15 +265,17 @@ const createFileOrFolderModal = reactive({
   input: "",
 });
 
-// 重命名文档
-const renameDocumentModal = reactive({
+const createFormRef = ref();
+const createFileOrFolderFormRef = ref();
+
+// 编辑文档信息
+const editModal = reactive({
   visible: false,
-  id: "",
-  title: "",
+  documentContent: undefined as DocumentContentVO | undefined,
 });
 
 const openCreateModal = (
-  type: "parent" | "leaf",
+  type: "dir" | "file",
   parent_id: string,
   document_id: string
 ) => {
@@ -259,12 +284,12 @@ const openCreateModal = (
   createModal.parent_id = parent_id;
   createModal.document_id = document_id;
   createModal.input = "";
-  createModal.title = type === "parent" ? "新增目录" : "新增文档";
+  createModal.title = type === "dir" ? "新增目录" : "新增文档";
   createModal.expandedKey = parent_id; // 新增目录时，展开父目录
 };
 
 const openCreateFileOrFolderModal = (
-  type: "parent" | "leaf",
+  type: "dir" | "file",
   document_id: string
 ) => {
   createFileOrFolderModal.visible = true;
@@ -272,79 +297,91 @@ const openCreateFileOrFolderModal = (
   createFileOrFolderModal.parent_id = "";
   createFileOrFolderModal.document_id = document_id;
   createFileOrFolderModal.input = "";
-  createFileOrFolderModal.title = type === "parent" ? "新增目录" : "新增文档";
+  createFileOrFolderModal.title = type === "dir" ? "新增目录" : "新增文档";
 };
 
 const handleCreate = async () => {
-  if (!createModal.input.trim()) {
-    message.warning("请输入标题");
-    return;
+  const success = await createFormRef.value?.submit();
+  if (success) {
+    createModal.visible = false;
+    createFormRef.value?.resetFields?.(); // 如果有reset方法
+    await getDocumentTree(route.params.id as string);
+    message.success("创建成功");
   }
-
-  // 新增文档
-  const createDocument: DocumentRequest = {
-    title: createModal.input,
-    content: "",
-    parent_id: createModal.parent_id,
-    document_id: createModal.document_id,
-    document_type: createModal.type,
-  };
-
-  await createDocumentAPI(createDocument);
-  expandedKeys.value = [...expandedKeys.value, createModal.expandedKey];
-  await getDocumentTree(route.params.id as string);
-  createModal.visible = false;
-  message.success("创建成功");
 };
 
 const handleCreateFileOrFolder = async () => {
-  if (!createFileOrFolderModal.input.trim()) {
-    message.warning("请输入标题");
-    return;
+  const success = await createFileOrFolderFormRef.value?.submit();
+  if (success) {
+    createFileOrFolderModal.visible = false;
+    createFileOrFolderFormRef.value?.resetFields?.(); // 如果有reset方法
+    await getDocumentTree(route.params.id as string);
+    message.success("创建成功");
   }
-  const createDocument: DocumentRequest = {
-    title: createFileOrFolderModal.input,
-    content: "",
-    parent_id: createFileOrFolderModal.parent_id,
-    document_id: createFileOrFolderModal.document_id,
-    document_type: createFileOrFolderModal.type,
-  };
-
-  await createDocumentAPI(createDocument);
-  await getDocumentTree(route.params.id as string);
-  createFileOrFolderModal.visible = false;
-  message.success("创建成功");
 };
 
 function filterTree(data: TreeNode[]): TreeNode[] {
   return data
-    .filter(item => isParent(item.value)) // 先过滤当前层满足条件的节点
+    .filter(item => isDir(item.value)) // 先过滤当前层满足条件的节点
     .map((item: TreeNode) => ({
       ...item,
       children: item.children ? filterTree(item.children) : [], // 递归过滤子节点
     }));
 }
 
-const getDocumentTree = async (id: string) => {
-  loading.value = true;
-  const res = await getDocumentTreeByIDAPI(id);
-  docTreeData.value = res.data;
-  treeData.value = convertToTreeData(docTreeData.value);
-  selectTreeData.value = convertToSelectTree(docTreeData.value);
-  selectTreeData.value = filterTree(selectTreeData.value);
-  console.log(selectTreeData.value);
-  selectTreeData.value = [
+// 过滤出只有目录的树形数据，用于父级选择
+function filterDirTree(
+  data: TreeProps["treeData"] = []
+): TreeProps["treeData"] {
+  return data
+    .filter(item => isDir(item.key as string))
+    .map(item => ({
+      ...item,
+      children: item.children ? filterDirTree(item.children) : [],
+    }));
+}
+
+const getParentTreeData = (
+  data: TreeProps["treeData"] = []
+): TreeProps["treeData"] => {
+  return [
     {
-      label: "根目录",
-      value: id,
-      children: [...selectTreeData.value],
+      key: document_id.value,
+      title: "根目录",
+      children: filterDirTree(data),
     },
   ];
-  loading.value = false;
+};
+
+const getDocumentTree = async (id: string) => {
+  loading.value = true;
+  try {
+    console.log("获取文档内容列表, document_id:", id);
+    const res = await getDocumentTreeDataAPI(id);
+    console.log("文档内容数据:", res.data);
+    docTreeData.value = res.data;
+    treeData.value = convertToTreeData(docTreeData.value);
+    selectTreeData.value = convertToSelectTree(docTreeData.value);
+    selectTreeData.value = filterTree(selectTreeData.value);
+    console.log("转换后的树形数据:", treeData.value);
+    console.log("转换后的选择树形数据:", filterDirTree(treeData.value));
+    selectTreeData.value = [
+      {
+        label: "根目录",
+        value: id,
+        children: [...selectTreeData.value],
+      },
+    ];
+  } catch (error) {
+    console.error("获取文档内容失败:", error);
+    message.error("获取文档内容失败");
+  } finally {
+    loading.value = false;
+  }
 };
 
 const getParentDoc = async () => {
-  const res = await getAllParentDocAPI(document_id.value);
+  const res = await getDocumentContentByDocumentIdAPI(document_id.value);
   expandedKeys.value = [
     ...expandedKeys.value,
     ...res.data.map(item => item.id),
@@ -352,7 +389,7 @@ const getParentDoc = async () => {
 };
 
 const deleteDocumentLeaf = async (id: string) => {
-  await deleteDocumentLeafByIDAPI(id);
+  await deleteDocumentContentAPI(id);
   await getDocumentTree(route.params.id as string);
 };
 
@@ -362,73 +399,94 @@ const deleteDocumentParent = async (id: string) => {
   await getDocumentTree(route.params.id as string);
 };
 
-const handleRenameModalOpen = (id: string) => {
-  renameDocumentModal.visible = true;
-  renameDocumentModal.id = id;
-  renameDocumentModal.title = docTreeData.value.find(item => item.id === id)
-    ?.title as string;
-};
-
-const handleRename = async () => {
-  await renameDocumentAPI(renameDocumentModal.id, renameDocumentModal.title);
-  await getDocumentTree(route.params.id as string);
-  renameDocumentModal.visible = false;
-  message.success("重命名成功");
-};
-
-const saveDocument = async () => {
-  await saveDocumentAPI({
-    id: documentDetail.value.id,
-    title: documentDetail.value.title,
-    content: documentDetail.value.content,
-  });
-  originDocument.value.title = documentDetail.value.title;
-  originDocument.value.content = documentDetail.value.content;
-  message.success("保存成功");
-};
-
-const onHandleSelect = async (keys: string[]) => {
-  const key = keys[0];
-  if (isLeaf(key)) {
-    const res = await getDocumentByIDAPI(key);
-    documentDetail.value = {
-      id: res.data.id,
-      title: res.data.title,
-      content: res.data.content,
-    };
-    originDocument.value = {
-      id: res.data.id,
-      title: res.data.title,
-      content: res.data.content,
-    };
+const handleEditModalOpen = async (id: string) => {
+  try {
+    const res = await getDocumentContentAPI(id);
+    editModal.documentContent = res.data;
+    editModal.visible = true;
+  } catch (error) {
+    console.error("获取文档信息失败:", error);
+    message.error("获取文档信息失败");
   }
 };
 
-const isParent = (id: string): boolean =>
-  docTreeData.value.find(item => item.id === id)?.document_type === "parent";
-
-const isLeaf = (id: string): boolean =>
-  docTreeData.value.find(item => item.id === id)?.document_type === "leaf";
-
-const isDocumentAlreadyEdit = computed(() => {
-  return (
-    documentDetail.value.title !== originDocument.value.title ||
-    documentDetail.value.content !== originDocument.value.content
+const handleEditSuccess = (updatedContent: DocumentContentVO) => {
+  // 更新本地数据
+  const index = docTreeData.value.findIndex(
+    item => item.id === updatedContent.id
   );
-});
+  if (index !== -1) {
+    docTreeData.value[index] = {
+      ...docTreeData.value[index],
+      title: updatedContent.title,
+      sort: updatedContent.sort, // 关键：同步更新排序字段
+      // 其他字段如有需要也可同步
+    };
+  }
 
-watchEffect(() => {
-  documentStore.setActionButtonList([
-    {
-      name: "保存",
-      disabled: !isDocumentAlreadyEdit.value,
-      action: saveDocument,
-    },
-  ]);
-  documentStore.setEditDocumentTitle(documentDetail.value.title);
-});
+  // 如果当前选中的是编辑的文档，也更新详情
+  if (documentDetail.value?.id === updatedContent.id) {
+    documentDetail.value = updatedContent;
+    originDocument.value = { ...updatedContent };
+  }
 
-// 页面加载逻辑（先加载文档树，然后加载首页）
+  // 重新生成树形数据
+  treeData.value = convertToTreeData(docTreeData.value);
+  selectTreeData.value = convertToSelectTree(docTreeData.value);
+  selectTreeData.value = filterTree(selectTreeData.value);
+
+  message.success("编辑成功");
+};
+
+const onHandleSelect = async (keys: string[]) => {
+  console.log("选中节点:", keys);
+  const key = keys[0];
+
+  if (!key) {
+    documentDetail.value = undefined;
+    originDocument.value = undefined;
+    return;
+  }
+
+  if (isFile(key)) {
+    console.log("选中文档节点:", key);
+    try {
+      const res = await getDocumentContentAPI(key);
+      console.log("获取文档内容成功:", res.data);
+      documentDetail.value = res.data;
+      originDocument.value = { ...res.data };
+    } catch (error) {
+      message.error("获取文档内容失败");
+      documentDetail.value = undefined;
+      originDocument.value = undefined;
+    }
+  } else {
+    console.log("选中目录节点:", key);
+    documentDetail.value = undefined;
+    originDocument.value = undefined;
+  }
+};
+
+const handleDocumentUpdate = (updatedContent: DocumentContentVO) => {
+  documentDetail.value = updatedContent;
+  originDocument.value = { ...updatedContent };
+};
+
+// 判断当前节点是否是目录
+const isDir = (id: string): boolean => {
+  const item = docTreeData.value.find(item => item.id === id);
+  const result = item?.is_dir === true;
+  return result;
+};
+
+// 判断当前节点是否是文档
+const isFile = (id: string): boolean => {
+  const item = docTreeData.value.find(item => item.id === id);
+  const result = item?.is_dir === false;
+  return result;
+};
+
+// 页面加载逻辑(先加载文档树, 然后加载首页)
 onMounted(async () => {
   await getDocumentTree(document_id.value);
   await nextTick();

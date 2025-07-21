@@ -8,7 +8,12 @@ export function convertToTreeData(
   const roots: any[] = [];
 
   data.forEach(item => {
-    map.set(item.id, { key: item.id, title: item.title, children: [] });
+    map.set(item.id, {
+      key: item.id,
+      title: item.title,
+      sort: item.sort ?? 1,
+      children: [],
+    });
   });
 
   data.forEach(item => {
@@ -20,6 +25,17 @@ export function convertToTreeData(
       roots.push(node);
     }
   });
+
+  // 递归排序每层children
+  function sortTree(nodes: any[]) {
+    nodes.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    nodes.forEach(node => {
+      if (node.children && node.children.length > 0) {
+        sortTree(node.children);
+      }
+    });
+  }
+  sortTree(roots);
 
   return roots;
 }
@@ -37,7 +53,7 @@ export function convertToSelectTree(data: DocumentTreeVO[]): TreeNode[] {
   // 初始化节点 map
   for (const item of data) {
     idToNodeMap.set(item.id, {
-      label: item.title,
+      label: item.alias || item.title,
       value: item.id,
       children: [],
     });
@@ -66,7 +82,15 @@ export function convertToSelectTree(data: DocumentTreeVO[]): TreeNode[] {
   };
   clean(result);
 
-  return result;
+  // 包一层根目录
+  const documentId = data[0]?.document_id || "root";
+  return [
+    {
+      label: "根目录",
+      value: documentId,
+      children: result,
+    },
+  ];
 }
 
 export function findNodeByKey(

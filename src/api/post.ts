@@ -48,7 +48,7 @@ export const getPostByIdAPI: (id: string) => Promise<Response<PostVO>> = id => {
 export const getPublishPostDetailListAPI: (
   params: PageReq
 ) => Promise<PageResponse<PostDetailVO>> = params => {
-  return request.get("/post/detail/list", { params });
+  return request.get("/post/list", { params });
 };
 
 // 分页获取草稿箱文章详情列表

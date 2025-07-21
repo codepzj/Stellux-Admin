@@ -5,7 +5,15 @@
     </div>
     <a-skeleton :loading="loading" active>
       <div class="py-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a-empty
+          v-if="docList.length === 0"
+          description="暂无文档"
+          class="py-16"
+        />
+        <div
+          v-else
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
           <a-card v-for="doc in docList" :key="doc.id">
             <div class="flex justify-between items-center gap-2 px-2 py-4">
               <div class="flex items-center gap-2">
@@ -23,6 +31,9 @@
                 </span>
                 <SvgIcon name="global" :size="14" v-if="doc.is_public" />
                 <SvgIcon name="lock" :size="14" v-else />
+                <a-tag v-if="doc.is_deleted" color="red" size="small"
+                  >已删除</a-tag
+                >
               </div>
               <div class="cursor-pointer">
                 <a-dropdown :trigger="['click']" placement="bottomRight">
@@ -31,11 +42,21 @@
                       <a-menu-item @click="handleEdit(doc.id)"
                         >编辑</a-menu-item
                       >
+                      <a-menu-item
+                        v-if="!doc.is_deleted"
+                        @click="handleSoftDelete(doc.id)"
+                        >软删除</a-menu-item
+                      >
+                      <a-menu-item
+                        v-if="doc.is_deleted"
+                        @click="handleRestore(doc.id)"
+                        >恢复</a-menu-item
+                      >
                       <a-popconfirm
-                        title="确定删除该文档吗？"
+                        title="确定永久删除该文档吗？此操作不可恢复！"
                         @confirm="handleDelete(doc.id)"
                       >
-                        <a-menu-item>删除</a-menu-item>
+                        <a-menu-item danger>永久删除</a-menu-item>
                       </a-popconfirm>
                     </a-menu>
                   </template>
@@ -81,6 +102,19 @@
               <a-input
                 v-model:value="createDoc.alias"
                 placeholder="请输入别名"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="8">
+          <a-col :span="12">
+            <a-form-item label="排序" name="sort">
+              <a-input-number
+                v-model:value="createDoc.sort"
+                :min="1"
+                :max="9999"
+                placeholder="请输入排序"
+                class="w-full"
               />
             </a-form-item>
           </a-col>
@@ -154,6 +188,19 @@
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row :gutter="8">
+          <a-col :span="12">
+            <a-form-item label="排序" name="sort">
+              <a-input-number
+                v-model:value="editDoc.sort"
+                :min="1"
+                :max="9999"
+                placeholder="请输入排序"
+                class="w-full"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
         <a-form-item label="描述" name="description">
           <a-input
             v-model:value="editDoc.description"
@@ -215,8 +262,10 @@
 import {
   createRootDocumentAPI,
   deleteRootDocumentAPI,
-  editRootDocumentAPI,
-  getAllRootDocAPI,
+  updateRootDocumentAPI,
+  getRootDocumentListAPI,
+  softDeleteRootDocumentAPI,
+  restoreRootDocumentAPI,
 } from "@/api/document";
 import type {
   DocumentRootEditRequest,
@@ -245,11 +294,22 @@ const editDoc = ref<DocumentRootEditRequest>({
   thumbnail: "",
   document_type: "root",
   is_public: false,
+  sort: 1,
 });
 const rules: Record<string, any> = {
   title: [{ required: true, message: "请输入标题" }],
   alias: [{ required: true, message: "请输入别名" }],
   description: [{ required: true, message: "请输入描述" }],
+  sort: [
+    { required: true, message: "请输入排序", type: "number", trigger: "blur" },
+    {
+      type: "number",
+      min: 1,
+      max: 9999,
+      message: "排序值在1-9999之间",
+      trigger: "blur",
+    },
+  ],
 };
 
 // 新增文档
@@ -260,14 +320,15 @@ const createDoc = ref<DocumentRootRequest>({
   thumbnail: "",
   document_type: "root",
   is_public: true,
+  sort: 1,
 });
 
 // 获取所有根文档
 const getAllDoc = async () => {
   loading.value = true;
   try {
-    const res = await getAllRootDocAPI();
-    docList.value = res.data;
+    const res = await getRootDocumentListAPI({ page_no: 1, page_size: 100 });
+    docList.value = res.data.list || res.data;
   } catch (error) {
     message.error("获取文档列表失败");
   } finally {
@@ -287,6 +348,7 @@ const handleEdit = (id: string) => {
       thumbnail: doc.thumbnail,
       document_type: "root",
       is_public: doc.is_public,
+      sort: doc.sort,
     };
   }
   editModalOpen.value = true;
@@ -299,6 +361,20 @@ const handleDelete = async (id: string) => {
   message.success("文档删除成功");
 };
 
+// 软删除文档
+const handleSoftDelete = async (id: string) => {
+  await softDeleteRootDocumentAPI(id);
+  await getAllDoc();
+  message.success("文档软删除成功");
+};
+
+// 恢复文档
+const handleRestore = async (id: string) => {
+  await restoreRootDocumentAPI(id);
+  await getAllDoc();
+  message.success("文档恢复成功");
+};
+
 // 清空新增文档
 const clearCreateDoc = () => {
   createDoc.value.title = "";
@@ -306,6 +382,7 @@ const clearCreateDoc = () => {
   createDoc.value.is_public = false;
   createDoc.value.description = "";
   createDoc.value.thumbnail = "";
+  createDoc.value.sort = 1;
 };
 
 // 清空编辑文档
@@ -317,6 +394,7 @@ const clearEditDoc = () => {
   editDoc.value.thumbnail = "";
   editDoc.value.document_type = "root";
   editDoc.value.is_public = false;
+  editDoc.value.sort = 1;
 };
 
 // 新增文档
@@ -345,7 +423,7 @@ const handleCreateCancel = () => {
 
 const handleEditOk = async () => {
   await formRef.value?.validate();
-  await editRootDocumentAPI(editDoc.value);
+  await updateRootDocumentAPI(editDoc.value);
 
   message.success("文档编辑成功");
   editModalOpen.value = false;

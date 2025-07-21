@@ -8,7 +8,6 @@
         @change="content = $event"
         :mode="props.mode"
         placeholder="请输入内容..."
-        class="!overflow-hidden"
         :previewDebounce="0"
       />
     </div>
@@ -94,4 +93,8 @@ const mdPlugins = ref([
 ]);
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.bytemd {
+  height: 100%;
+}
+</style>
