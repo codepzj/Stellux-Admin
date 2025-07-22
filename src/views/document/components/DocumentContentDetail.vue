@@ -115,7 +115,7 @@ const formatDate = (dateString?: string) => {
 const handleEdit = () => {
   isEditing.value = !isEditing.value;
   if (isEditing.value) {
-    editingContent.value = editingContent.value || props.documentContent?.content;
+    editingContent.value = editingContent.value || props.documentContent?.content || "";
   }
 };
 

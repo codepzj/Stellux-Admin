@@ -151,6 +151,15 @@ export const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: "/test",
+    name: "Test",
+    component: () => import("@/views/test/index.vue"),
+    meta: {
+      title: "测试",
+      icon: () => h(Icon, { icon: "uil:test", width: 18, height: 18 }),
+    },
+  },
+  {
     path: "/document",
     name: "Document",
     component: () => import("@/views/document/index.vue"),

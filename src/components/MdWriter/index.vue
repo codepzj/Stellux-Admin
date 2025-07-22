@@ -1,100 +1,96 @@
 <template>
-  <div class="h-full">
-    <div class="md-editor markdown-body">
-      <Editor
-        :value="content"
-        :locale="zhHans"
-        :plugins="mdPlugins"
-        @change="content = $event"
-        :mode="props.mode"
-        placeholder="请输入内容..."
-        :previewDebounce="0"
-      />
-    </div>
-    <PhotoSelect
-      v-model:open="photoSelectOpen"
-      @selected-picture="selectedPicture"
-    />
-  </div>
+  <MdEditor
+    v-model="content"
+    :previewTheme="editorState.previewTheme"
+    :codeTheme="editorState.codeTheme"
+    :theme="theme"
+    :showCodeRowNumber="editorState.showCodeRowNumber"
+    :autoFoldThreshold="editorState.autoFoldThreshold"
+    :toolbars="toolbars"
+    class="!h-full"
+  >
+    <template #defToolbars>
+      <PhotoSelect @selected-picture="selectedPicture" />
+    </template>
+  </MdEditor>
 </template>
 
-<script lang="ts" setup>
-// @ts-ignore
-import { Editor } from "@bytemd/vue-next";
-import zhHans from "bytemd/locales/zh_Hans.json";
-
-import gfm from "@bytemd/plugin-gfm";
-import gemoji from "@bytemd/plugin-gemoji";
-import highlight from "@bytemd/plugin-highlight";
-import frontmatter from "@bytemd/plugin-frontmatter";
-import mediumZoom from "@bytemd/plugin-medium-zoom";
-import mermaid from "@bytemd/plugin-mermaid";
-import breaks from "@bytemd/plugin-breaks";
-import photoSelect from "./plugins/photoSelect";
+<script setup>
+import { MdEditor } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
 import { useVModel } from "@vueuse/core";
-import PhotoSelect from "@/components/PhotoSelect/index.vue";
+import { useSystemStore } from "@/store";
+import PhotoSelect from "./plugins/photoSelect.vue";
 
-const photoSelectOpen = ref(false);
+const props = defineProps({
+  content: {
+    type: String,
+    default: "",
+  },
+});
+const content = useVModel(props, "content");
+const systemStore = useSystemStore();
+const editorState = ref({
+  previewTheme: "github",
+  codeTheme: "github",
+  showCodeRowNumber: false,
+  autoFoldThreshold: 100,
+});
 
-const props = withDefaults(
-  defineProps<{
-    content: string;
-    mode?: "split" | "tab" | "auto";
-  }>(),
-  {
-    mode: "auto",
-  }
-);
+const theme = computed(() => systemStore.themeMode);
+const toolbars = [
+  "bold",
+  "underline",
+  "italic",
+  "-",
+  "title",
+  "strikeThrough",
+  "sub",
+  "sup",
+  "quote",
+  "unorderedList",
+  "orderedList",
+  "task",
+  "-",
+  "codeRow",
+  "code",
+  "link",
+  "table",
+  "mermaid",
+  "katex",
+  "-",
+  0,
+  "=",
+  "pageFullscreen",
+  "fullscreen",
+  "preview",
+  "previewOnly",
+  "catalog",
+];
 
-const emit = defineEmits<{
-  (e: "update:content", value: string): void;
-  (e: "update:mode", value: "split" | "tab" | "auto"): void;
-}>();
-
-const content = useVModel(props, "content", emit);
-const selectedPicture = (picture: string) => {
+const selectedPicture = (picture) => {
   // 如果图片为空，则不添加
   if (!picture) return;
   content.value = content.value + `![图片](${picture})`;
 };
+const emit = defineEmits(["update:content"]);
 
-const mdPlugins = ref([
-  gfm({
-    locale: {
-      strike: "删除线",
-      strikeText: "删除线",
-      task: "任务",
-      taskText: "任务",
-      table: "表格",
-      tableHeading: "表格标题",
-    },
-  }),
-  gemoji(),
-  highlight(),
-  frontmatter(),
-  mediumZoom(),
-  breaks(),
-  mermaid({
-    locale: {
-      mermaid: "图表",
-      flowchart: "流程图",
-      sequence: "时序图",
-      class: "类图",
-      state: "状态图",
-      er: "实体关系图",
-      uj: "用户旅程图",
-      gantt: "甘特图",
-      pie: "饼图",
-      mindmap: "思维导图",
-      timeline: "时间线",
-    },
-  }),
-  photoSelect(photoSelectOpen),
-]);
+watch(
+  () => props.content,
+  newVal => {
+    editorState.value.content = newVal;
+  }
+);
+
+watch(
+  () => editorState.value.content,
+  newVal => {
+    emit("update:content", newVal);
+  }
+);
 </script>
-
-<style lang="scss" scoped>
-.bytemd {
-  height: 100%;
+<style scoped>
+:deep(.md-editor-preview .md-editor-code .md-editor-code-head) {
+  z-index: 0 !important;
 }
 </style>

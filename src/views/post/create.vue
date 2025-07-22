@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <PostContentWriter mode="create" v-model:post-form="postForm" />
-  </div>
+  <PostContentWriter mode="create" v-model:post-form="postForm" />
 </template>
 
 <script setup lang="ts">

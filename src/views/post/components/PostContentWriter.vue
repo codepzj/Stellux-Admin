@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-[calc(100vh-145px)]">
     <div class="flex justify-between items-center my-4 gap-2">
       <div class="w-[300px] md:w-[50%]">
         <a-input
@@ -12,8 +12,9 @@
       </div>
       <a-button type="primary" @click="open = true"> 发布文章 </a-button>
     </div>
-
-    <MdWriter v-model:content="postForm.content" />
+    <div class="h-full">
+      <MdWriter v-model:content="postForm.content" />
+    </div>
 
     <PostFormDrawer
       :mode="props.mode"
