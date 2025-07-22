@@ -76,7 +76,7 @@
             >
               <img
                 :src="postForm.thumbnail"
-                class="rounded-md cursor-pointer object-fill max-w-[192px] max-h-[108px]"
+                class="rounded-md cursor-pointer object-fill w-[192px] h-[108px]"
                 @click="thumbnailModalOpen = true"
               />
               <div

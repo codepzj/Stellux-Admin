@@ -1,52 +1,53 @@
 <template>
-  <div class="h-full px-8 overflow-x-hidden">
-    <Viewer v-model:value="content" :plugins="mdPlugins" />
+  <div class="flex gap-8 h-full">
+    <MdPreview
+      class="md:!w-3/4 w-full"
+      :modelValue="content"
+      :theme="theme"
+      :previewTheme="editorState.previewTheme"
+      :codeTheme="editorState.codeTheme"
+      :showCodeRowNumber="editorState.showCodeRowNumber"
+      :autoFoldThreshold="editorState.autoFoldThreshold"
+    />
+    <div class="md:!w-1/4 !max-h-125 overflow-y-auto hidden md:block sticky top-10">
+      <a-anchor
+        class="w-full !max-h-125"
+        affixed
+        :items="anchorItems"
+        :offset-top="0"
+        :offset-bottom="100"
+        @onChange="onChange"
+      />
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-// @ts-ignore
-import { Viewer } from "@bytemd/vue-next";
-import gfm from "@bytemd/plugin-gfm";
-import gemoji from "@bytemd/plugin-gemoji";
-import highlight from "@bytemd/plugin-highlight";
-import frontmatter from "@bytemd/plugin-frontmatter";
-import mediumZoom from "@bytemd/plugin-medium-zoom";
-import breaks from "@bytemd/plugin-breaks";
-import mermaid from "@bytemd/plugin-mermaid";
-import { useVModel } from "@vueuse/core";
+<script lang="ts" setup>
+import { MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/preview.css";
+import { parseMarkdownToAnchorItems } from "@/utils/tool";
+import { useSystemStore } from "@/store";
 
-const props = defineProps<{
-  content: string;
-}>();
+const systemStore = useSystemStore();
+const props = defineProps({
+  content: {
+    type: String,
+    default: "",
+  },
+});
 
-const emit = defineEmits<{
-  (e: "update:content", value: string): void;
-}>();
+const editorState = ref({
+  previewTheme: "github",
+  codeTheme: "github",
+  showCodeRowNumber: false,
+  autoFoldThreshold: 100,
+});
 
-const content = useVModel(props, "content", emit);
-const mdPlugins = ref([
-  gfm(),
-  gemoji(),
-  highlight(),
-  frontmatter(),
-  mediumZoom(),
-  breaks(),
-  mermaid({
-    locale: {
-      mermaid: "图表",
-      flowchart: "流程图",
-      sequence: "时序图",
-      class: "类图",
-      state: "状态图",
-      er: "实体关系图",
-      uj: "用户旅程图",
-      gantt: "甘特图",
-      pie: "饼图",
-      mindmap: "思维导图",
-      timeline: "时间线",
-    },
-  }),
-]);
+const onChange = (link: string) => {
+  console.log("Anchor:OnChange", link);
+};
+
+const theme = computed(() => systemStore.themeMode);
+
+const anchorItems = computed(() => parseMarkdownToAnchorItems(props.content));
 </script>
-<style lang="scss" scoped></style>

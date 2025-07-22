@@ -125,7 +125,7 @@
                 size="small"
                 @click="() => onHandlePublish(record.id)"
               >
-                {{ props.type === "publish" ? "下架" : "上架" }}
+                {{ props.type === "publish" ? "设为草稿" : "发布文章" }}
               </a-button>
               <a-button
                 type="link"
@@ -257,7 +257,7 @@ const getPostList = async () => {
 
 const onHandlePublish = async (id: string) => {
   await updatePostPublishStatusAPI(id, props.type !== "publish");
-  message.success(props.type === "publish" ? "下架成功" : "上架成功");
+  message.success(props.type === "publish" ? "设为草稿成功" : "发布文章成功");
   await getPostList();
 };
 
