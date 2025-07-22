@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col gap-4">
     <a-page-header
       :title="$route.meta.title"
       class="!px-0"
@@ -170,6 +170,20 @@
         </template>
       </template>
     </a-table>
+    <div class="flex justify-end !my-4">
+      <a-pagination
+        v-model:current="page.page_no"
+        :total="totalCount"
+        :page-size="page.page_size"
+        :page-size-options="pageSizeOptions"
+        @change="onPageChange"
+        show-size-changer
+      >
+        <template #buildOptionText="props">
+          <span>{{ props.value }}条/页</span>
+        </template>
+      </a-pagination>
+    </div>
   </div>
 </template>
 
@@ -203,16 +217,18 @@ const postList = ref<PostDetailVO[]>([]);
 const router = useRouter();
 
 const props = defineProps<{
-  page: PageReq;
   type: "publish" | "draft" | "bin";
 }>();
 
-const emit = defineEmits<{
-  (e: "update:page", value: PageReq): void;
-}>();
+const pageSizeOptions = ref<string[]>(["10", "20", "30", "40", "50"]);
+const page = reactive<PageReq>({
+  page_no: 1,
+  page_size: 10,
+  keyword: "",
+});
+const totalCount = ref(1);
 
 const backIcon = h(ArrowLeftOutlined);
-const page = toRef(props, "page");
 
 const selectedIDList = ref<string[]>([]);
 const rowSelection: TableProps<PostDetailVO>["rowSelection"] = {
@@ -227,17 +243,17 @@ const getPostList = async () => {
     let res: PageResponse<PostDetailVO>;
     switch (props.type) {
       case "publish":
-        res = await getPublishPostDetailListAPI(page.value);
+        res = await getPublishPostDetailListAPI(page);
         break;
       case "draft":
-        res = await getDraftPostDetailListAPI(page.value);
+        res = await getDraftPostDetailListAPI(page);
         break;
       case "bin":
-        res = await getBinPostDetailListAPI(page.value);
+        res = await getBinPostDetailListAPI(page);
         break;
     }
     postList.value = res.data.list;
-    emit("update:page", page.value);
+    totalCount.value = res.data.total_count;
   } finally {
     loading.value = false;
   }
@@ -277,7 +293,7 @@ const onHandleRestoreSelected = async () => {
 
 const onSearch = async () => {
   searchLoading.value = true;
-  page.value.page_no = 1;
+  page.page_no = 1;
   await getPostList();
   searchLoading.value = false;
 };
@@ -295,6 +311,11 @@ const onHandleSoftDelete = async (record: PostDetailVO) => {
 const onHandleDelete = async (record: PostDetailVO) => {
   await deletePostAPI(record.id);
   message.success("已永久删除");
+  await getPostList();
+};
+
+const onPageChange = async (pageNo: number) => {
+  page.page_no = pageNo;
   await getPostList();
 };
 
