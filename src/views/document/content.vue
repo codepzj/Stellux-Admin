@@ -216,7 +216,7 @@ import DocumentContentForm from "./components/DocumentContentForm.vue";
 import DocumentEditModal from "./components/DocumentEditModal.vue";
 
 import {
-  deleteDocumentByIDListAPI,
+  deleteDocumentByIdListAPI,
   deleteDocumentContentAPI,
   getDocumentContentByDocumentIdAPI,
   getDocumentContentAPI,
@@ -395,7 +395,7 @@ const deleteDocumentLeaf = async (id: string) => {
 
 const deleteDocumentParent = async (id: string) => {
   const childIds = getAllChildIdByParentId(treeData.value, id);
-  await deleteDocumentByIDListAPI(childIds);
+  await deleteDocumentByIdListAPI(childIds);
   await getDocumentTree(route.params.id as string);
 };
 

@@ -139,7 +139,7 @@ const rules = {
       trigger: "blur",
     },
   ],
-  document_id: [{ required: true, message: "文档ID不能为空", trigger: "blur" }],
+  document_id: [{ required: true, message: "文档Id不能为空", trigger: "blur" }],
 };
 
 // 监听父级目录变化

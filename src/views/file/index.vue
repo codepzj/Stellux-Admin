@@ -6,17 +6,14 @@
       @selected-photos="photos => (selectedPhotos = photos)"
     >
       <template #left>
-        <a-popconfirm
-          title="确定删除该图片吗，请确保图片没有被使用？"
-          @confirm="handleDelete"
+        <a-button
+          type="primary"
+          danger
+          :disabled="selectedPhotos.length === 0"
+          @click="deleteModalOpen = true"
         >
-          <a-button
-            type="primary"
-            danger
-            :disabled="selectedPhotos.length === 0"
-            >删除</a-button
-          >
-        </a-popconfirm>
+          删除
+        </a-button>
       </template>
       <template #right>
         <Uploader @close="getList" />
@@ -30,6 +27,15 @@
         @change="getList"
       />
     </div>
+    <a-modal
+      v-model:open="deleteModalOpen"
+      title="确定删除?"
+      @ok="handleDelete"
+      @cancel="deleteModalOpen = false"
+      centered
+    >
+      <p>请确保图片没有被使用</p>
+    </a-modal>
   </div>
 </template>
 <script setup lang="ts">
@@ -41,6 +47,8 @@ import { message } from "ant-design-vue";
 import type { PageData } from "@/types/dto";
 import { API_BASE_URL } from "@/constant";
 
+// 删除弹窗
+const deleteModalOpen = ref(false);
 const page = reactive<PageData<FileVO>>({
   page_no: 1,
   page_size: 24,
@@ -87,6 +95,7 @@ const handleDelete = async () => {
   });
   message.success("删除成功");
   await getList();
+  deleteModalOpen.value = false;
 };
 </script>
 <style scoped lang="scss"></style>

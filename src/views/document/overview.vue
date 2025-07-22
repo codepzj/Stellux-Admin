@@ -131,31 +131,28 @@
           <div class="flex flex-row gap-2 items-end">
             <div
               v-if="createDoc.thumbnail"
-              class="w-[200px] h-[112px] flex justify-center relative group"
+              class="w-[192px] h-[108px] flex justify-center relative group"
             >
-              <a-image
+              <img
                 :src="createDoc.thumbnail"
-                class="rounded-md cursor-pointer max-w-[200px] max-h-[112px] object-cover"
-                :preview="false"
+                class="rounded-md cursor-pointer object-fill max-w-[192px] max-h-[108px]"
                 @click="createThumbnailModalOpen = true"
               />
               <div
-                class="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                class="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               >
-                <a-button
-                  type="primary"
-                  shape="circle"
-                  danger
-                  size="small"
+                <Icon
+                  icon="solar:close-circle-bold-duotone"
+                  width="24"
+                  height="24"
+                  color="red"
                   @click.stop="createDoc.thumbnail = ''"
-                >
-                  <CloseOutlined />
-                </a-button>
+                />
               </div>
             </div>
             <div
               v-else
-              class="w-[200px] h-[112px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
+              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
               @click="createThumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
@@ -211,31 +208,28 @@
           <div class="flex flex-row gap-2 items-end">
             <div
               v-if="editDoc.thumbnail"
-              class="w-[200px] h-[112px] flex justify-center relative group"
+              class="w-[192px] h-[108px] flex justify-center relative group"
             >
-              <a-image
+              <img
                 :src="editDoc.thumbnail"
-                class="rounded-md cursor-pointer max-w-[200px] max-h-[112px] object-cover"
-                :preview="false"
+                class="rounded-md cursor-pointer object-fill max-w-[192px] max-h-[108px]"
                 @click="editThumbnailModalOpen = true"
               />
               <div
-                class="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                class="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               >
-                <a-button
-                  type="primary"
-                  shape="circle"
-                  danger
-                  size="small"
+                <Icon
+                  icon="solar:close-circle-bold-duotone"
+                  width="24"
+                  height="24"
+                  color="red"
                   @click.stop="editDoc.thumbnail = ''"
-                >
-                  <CloseOutlined />
-                </a-button>
+                />
               </div>
             </div>
             <div
               v-else
-              class="w-[200px] h-[112px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
+              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
               @click="editThumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
@@ -273,7 +267,6 @@ import type {
   DocumentRootVO,
 } from "@/types/document";
 import { message } from "ant-design-vue";
-import { CloseOutlined } from "@ant-design/icons-vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import PhotoSelect from "@/components/PhotoSelect/index.vue";
 import type { FormInstance } from "ant-design-vue";

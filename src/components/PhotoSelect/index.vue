@@ -78,7 +78,7 @@ const thumbnailModalOpen = useVModel(props, "open", emit);
  */
 const page = reactive<PageData<FileVO>>({
   page_no: 1,
-  page_size: 10,
+  page_size: 24,
   total_count: 0,
   total_page: 0,
   list: [],

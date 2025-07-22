@@ -19,62 +19,58 @@
 
       <div class="flex justify-between items-center mt-2">
         <div class="flex items-center gap-2">
-          <span v-if="selectedIDList.length" class="text-gray-500 text-sm">
-            已选中 {{ selectedIDList.length }} 篇文章
-          </span>
-
           <a-popconfirm
-            title="确定删除选中的文章吗？"
+            title="确定删除？"
             ok-text="确定"
             cancel-text="取消"
             @confirm="onHandleDeleteSelected"
+            :disabled="!selectedIdList.length"
           >
-            <a-button type="primary" danger :disabled="!selectedIDList.length">
+            <a-button type="primary" danger :disabled="!selectedIdList.length">
               <template #icon><DeleteOutlined /></template>
-              批量删除
+              删除
             </a-button>
           </a-popconfirm>
 
           <a-popconfirm
             v-if="props.type === 'bin'"
-            title="确定恢复选中的文章吗？"
+            title="确定恢复？"
             ok-text="确定"
             cancel-text="取消"
             @confirm="onHandleRestoreSelected"
+            :disabled="!selectedIdList.length"
           >
-            <a-button type="primary" :disabled="!selectedIDList.length">
+            <a-button type="primary" :disabled="!selectedIdList.length">
               <template #icon><UndoOutlined /></template>
-              批量恢复
+              恢复
             </a-button>
           </a-popconfirm>
         </div>
 
         <div class="flex gap-2">
-          <a-tooltip title="查看回收站">
-            <a-button
-              v-if="props.type !== 'bin'"
-              @click="$router.push({ name: 'PostBin' })"
-            >
-              回收站
-            </a-button>
-          </a-tooltip>
-          <a-tooltip title="查看草稿箱">
-            <a-button
-              v-if="props.type !== 'draft'"
-              @click="$router.push({ name: 'PostDraft' })"
-            >
-              草稿箱
-            </a-button>
-          </a-tooltip>
-          <a-tooltip title="创建新文章">
-            <a-button
-              v-if="props.type !== 'publish'"
-              type="primary"
-              @click="$router.push({ name: 'PostCreate' })"
-            >
-              新增文章
-            </a-button>
-          </a-tooltip>
+          <a-button
+            v-if="props.type !== 'publish'"
+            type="primary"
+            @click="
+              $router.push({ name: 'PostList', query: { type: 'publish' } })
+            "
+          >
+            已发布
+          </a-button>
+          <a-button
+            v-if="props.type !== 'bin'"
+            @click="$router.push({ name: 'PostList', query: { type: 'bin' } })"
+          >
+            回收站
+          </a-button>
+          <a-button
+            v-if="props.type !== 'draft'"
+            @click="
+              $router.push({ name: 'PostList', query: { type: 'draft' } })
+            "
+          >
+            草稿箱
+          </a-button>
         </div>
       </div>
     </a-page-header>
@@ -230,10 +226,10 @@ const totalCount = ref(1);
 
 const backIcon = h(ArrowLeftOutlined);
 
-const selectedIDList = ref<string[]>([]);
+const selectedIdList = ref<string[]>([]);
 const rowSelection: TableProps<PostDetailVO>["rowSelection"] = {
   onChange: (_keys: Key[], selectedRows) => {
-    selectedIDList.value = selectedRows.map(row => row.id);
+    selectedIdList.value = selectedRows.map(row => row.id);
   },
 };
 
@@ -272,22 +268,22 @@ const onHandleRestore = async (id: string) => {
 };
 
 const onHandleDeleteSelected = async () => {
-  if (!selectedIDList.value.length) return;
+  if (!selectedIdList.value.length) return;
   if (props.type === "bin") {
-    await deletePostBatchAPI(selectedIDList.value);
+    await deletePostBatchAPI(selectedIdList.value);
   } else {
-    await softDeletePostBatchAPI(selectedIDList.value);
+    await softDeletePostBatchAPI(selectedIdList.value);
   }
   message.success("批量操作成功");
-  selectedIDList.value = [];
+  selectedIdList.value = [];
   await getPostList();
 };
 
 const onHandleRestoreSelected = async () => {
-  if (!selectedIDList.value.length) return;
-  await restorePostBatchAPI(selectedIDList.value);
+  if (!selectedIdList.value.length) return;
+  await restorePostBatchAPI(selectedIdList.value);
   message.success("批量恢复成功");
-  selectedIDList.value = [];
+  selectedIdList.value = [];
   await getPostList();
 };
 
@@ -328,9 +324,14 @@ const columns: TableColumnType<PostDetailVO>[] = [
   { title: "操作", key: "action", width: 180, fixed: "right" },
 ];
 
-onMounted(() => {
-  getPostList();
-});
+// 监听类型变化, 重新获取文章列表
+watch(
+  () => props.type,
+  () => {
+    getPostList();
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss"></style>

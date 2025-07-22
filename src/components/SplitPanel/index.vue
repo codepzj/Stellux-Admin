@@ -59,7 +59,7 @@ const startDrag = (e: MouseEvent) => {
   .scalable {
     position: relative;
     width: 240px;
-    min-width: 0;
+    min-width: 200px;
     max-width: 50vw;
     overflow: hidden;
 

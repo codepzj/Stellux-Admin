@@ -2,11 +2,38 @@
   <div class="h-full flex flex-col">
     <!-- 文档信息头部 -->
     <div
-      class="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700"
+      class="flex-shrink-0 border-b border-gray-200 dark:border-gray-700"
     >
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {{ documentContent?.title || "文档详情" }}
+          <a-popover title="文档信息" placement="right">
+            <template #content>
+              <div
+                class="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400"
+              >
+                <div>
+                  <span class="font-medium">创建时间：</span>
+                  {{ formatDate(documentContent?.created_at) }}
+                </div>
+                <div>
+                  <span class="font-medium">更新时间：</span>
+                  {{ formatDate(documentContent?.updated_at) }}
+                </div>
+                <div>
+                  <span class="font-medium">别名：</span>
+                  {{ documentContent?.alias || "-" }}
+                </div>
+                <div>
+                  <span class="font-medium">排序：</span>
+                  {{ documentContent?.sort || 1 }}
+                </div>
+              </div>
+            </template>
+            <a-button type="link" size="small">
+              详情
+            </a-button>
+          </a-popover>
         </h2>
         <div class="flex items-center gap-2">
           <a-button
@@ -24,32 +51,6 @@
           <a-tag v-else color="green" size="small">预览模式</a-tag>
         </div>
       </div>
-
-      <!-- 文档元信息折叠面板 -->
-      <a-collapse class="mb-2" :bordered="false">
-        <a-collapse-panel key="meta" header="文档信息">
-          <div
-            class="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400"
-          >
-            <div>
-              <span class="font-medium">创建时间：</span>
-              {{ formatDate(documentContent?.created_at) }}
-            </div>
-            <div>
-              <span class="font-medium">更新时间：</span>
-              {{ formatDate(documentContent?.updated_at) }}
-            </div>
-            <div>
-              <span class="font-medium">别名：</span>
-              {{ documentContent?.alias || "-" }}
-            </div>
-            <div>
-              <span class="font-medium">排序：</span>
-              {{ documentContent?.sort || 0 }}
-            </div>
-          </div>
-        </a-collapse-panel>
-      </a-collapse>
     </div>
 
     <!-- 文档内容编辑区域 -->
@@ -61,8 +62,8 @@
       />
     </div>
     <div v-else class="h-full overflow-auto p-4">
-      <div v-if="documentContent?.content" class="prose max-w-none">
-        <MdViewer :content="documentContent.content" />
+      <div v-if="editingContent" class="prose max-w-none">
+        <MdViewer :content="editingContent" />
       </div>
       <div v-else class="text-gray-500 text-center py-8">
         <Icon icon="ant-design:file-text-outlined" class="text-2xl mb-2" />
@@ -114,7 +115,7 @@ const formatDate = (dateString?: string) => {
 const handleEdit = () => {
   isEditing.value = !isEditing.value;
   if (isEditing.value) {
-    editingContent.value = props.documentContent?.content || "";
+    editingContent.value = editingContent.value || props.documentContent?.content;
   }
 };
 

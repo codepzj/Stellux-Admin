@@ -2,11 +2,9 @@ import request from "@/utils/request";
 import type { Response } from "@/types/dto";
 import type {
   DocumentRootRequest,
-  DocumentRequest,
   DocumentTreeVO,
   DocumentRootVO,
   DocumentVO,
-  DocumentSaveRequest,
   DocumentRootEditRequest,
   DocumentContentRequest,
   DocumentContentEditRequest,
@@ -71,42 +69,42 @@ export const getRootDocumentListAPI = (params: any): Promise<Response<any>> => {
 export const createDocumentContentAPI = (
   data: DocumentContentRequest
 ): Promise<Response<any>> => {
-  return request.post("/admin-api/documentContent/create", data);
+  return request.post("/admin-api/document-content/create", data);
 };
 
 // 查询文档内容
 export const getDocumentContentAPI = (
   id: string
 ): Promise<Response<DocumentContentVO>> => {
-  return request.get(`/admin-api/documentContent/${id}`);
+  return request.get(`/admin-api/document-content/${id}`);
 };
 
 // 更新文档内容
 export const updateDocumentContentAPI = (
   data: DocumentContentEditRequest
 ): Promise<Response<any>> => {
-  return request.put("/admin-api/documentContent/update", data);
+  return request.put("/admin-api/document-content/update", data);
 };
 
 // 删除文档内容
 export const deleteDocumentContentAPI = (
   id: string
 ): Promise<Response<any>> => {
-  return request.delete(`/admin-api/documentContent/${id}`);
+  return request.delete(`/admin-api/document-content/${id}`);
 };
 
 // 软删除文档内容
 export const softDeleteDocumentContentAPI = (
   id: string
 ): Promise<Response<any>> => {
-  return request.put(`/admin-api/documentContent/soft-delete/${id}`);
+  return request.put(`/admin-api/document-content/soft-delete/${id}`);
 };
 
 // 恢复文档内容
 export const restoreDocumentContentAPI = (
   id: string
 ): Promise<Response<any>> => {
-  return request.put(`/admin-api/documentContent/restore/${id}`);
+  return request.put(`/admin-api/document-content/restore/${id}`);
 };
 
 // 根据父级ID查询文档内容
@@ -114,7 +112,7 @@ export const getDocumentContentByParentIdAPI = (
   parentId: string
 ): Promise<Response<DocumentContentVO[]>> => {
   return request.get(
-    `/admin-api/documentContent/getAllDocByParentId?parent_id=${parentId}`
+    `/admin-api/document-content/all/parent-id?parent_id=${parentId}`
   );
 };
 
@@ -123,7 +121,7 @@ export const getDocumentContentByDocumentIdAPI = (
   documentId: string
 ): Promise<Response<DocumentContentVO[]>> => {
   return request.get(
-    `/admin-api/documentContent/getAllDocByDocumentId?document_id=${documentId}`
+    `/admin-api/document-content/all/document-id?document_id=${documentId}`
   );
 };
 
@@ -131,14 +129,14 @@ export const getDocumentContentByDocumentIdAPI = (
 export const getDocumentContentListAPI = (
   params: any
 ): Promise<Response<any>> => {
-  return request.get("/admin-api/documentContent/list", { params });
+  return request.get("/admin-api/document-content/list", { params });
 };
 
 // 搜索文档内容
 export const searchDocumentContentAPI = (
   keyword: string
 ): Promise<Response<DocumentContentVO[]>> => {
-  return request.get(`/admin-api/documentContent/search?keyword=${keyword}`);
+  return request.get(`/admin-api/document-content/search?keyword=${keyword}`);
 };
 
 // ==================== 公开接口 ====================
@@ -150,12 +148,12 @@ export const getAllPublicDocumentAPI = (): Promise<
   return request.get("/document/public");
 };
 
-// 获取文档内容列表（平铺数据，前端组装成树）
+// 获取文档内容列表(平铺数据，前端组装成树)
 export const getDocumentTreeDataAPI = (
   documentId: string
 ): Promise<Response<DocumentTreeVO[]>> => {
   return request.get(
-    `/admin-api/documentContent/getAllDocByDocumentId?document_id=${documentId}`
+    `/admin-api/document-content/all/document-id?document_id=${documentId}`
   );
 };
 
@@ -178,28 +176,11 @@ export const getDocumentByIdAPI = (
   return request.get(`/document/${id}`);
 };
 
-// ==================== 兼容性接口（保留原有接口名） ====================
-
-// 兼容原有接口名
-export const getAllRootDocAPI = getRootDocumentListAPI;
-export const editRootDocumentAPI = updateRootDocumentAPI;
-export const getDocumentTreeByIDAPI = (documentId: string) =>
-  getDocumentTreeDataAPI(documentId);
-export const getAllParentDocAPI = getDocumentContentByDocumentIdAPI;
-export const getDocumentDetailByIDAPI = getDocumentContentAPI;
-export const deleteDocumentLeafByIDAPI = deleteDocumentContentAPI;
-export const deleteDocumentByIDListAPI = (
+// 批量删除文档
+export const deleteDocumentByIdListAPI = (
   document_id_list: string[]
 ): Promise<Response<any>> => {
-  return request.post(`/admin-api/documentContent/delete-list`, {
+  return request.post(`/admin-api/document-content/delete-list`, {
     document_id_list,
   });
-};
-export const getDocumentByIDAPI = getDocumentContentAPI;
-export const saveDocumentAPI = updateDocumentContentAPI;
-export const renameDocumentAPI = (
-  id: string,
-  title: string
-): Promise<Response<any>> => {
-  return request.put("/admin-api/documentContent/rename", { id, title });
 };

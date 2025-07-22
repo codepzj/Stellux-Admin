@@ -104,21 +104,6 @@ export const routes: RouteRecordRaw[] = [
             },
           },
           {
-            path: "draft",
-            component: () => import("@/views/post/draft.vue"),
-            name: "PostDraft",
-            meta: {
-              title: "草稿箱",
-              hideInSideBar: true,
-            },
-          },
-          {
-            path: "bin",
-            component: () => import("@/views/post/bin.vue"),
-            name: "PostBin",
-            meta: { title: "回收箱", hideInSideBar: true },
-          },
-          {
             path: "label",
             name: "PostLabel",
             meta: { title: "文章标签" },
@@ -174,6 +159,10 @@ export const routes: RouteRecordRaw[] = [
         path: "content/:id",
         name: "DocumentContent",
         component: () => import("@/views/document/content.vue"),
+        meta: {
+          keepAlive: true,
+          title: "文档内容",
+        },
       },
     ],
   },

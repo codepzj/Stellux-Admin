@@ -1,5 +1,5 @@
 <template>
-  <a-layout class="h-screen flex flex-col overflow-hidden">
+  <a-layout class="font-sans h-screen flex flex-col overflow-hidden">
     <a-layout-sider
       width="180"
       :trigger="null"
@@ -51,22 +51,4 @@ watch(width, newWidth => {
 });
 </script>
 
-<style lang="scss">
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-</style>
+<style lang="scss"></style>

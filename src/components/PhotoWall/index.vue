@@ -32,7 +32,7 @@
           v-lazy="photo.url"
           :alt="photo.name"
           :class="[
-            'w-full h-full object-contain cursor-pointer border transition-opacity duration-300',
+            'w-full h-full object-fill cursor-pointer border transition-opacity duration-300 rounded-md overflow-hidden',
             systemStore.themeMode === 'light'
               ? 'border-zinc-200'
               : 'border-zinc-800',
@@ -45,8 +45,10 @@
           v-if="selectedPhotos.includes(photo.url)"
           class="absolute top-1 right-1 z-10"
         >
-          <CheckCircleFilled
-            class="!text-green-500 !bg-white rounded-full text-xl shadow-md"
+          <Icon
+            icon="flat-color-icons:ok"
+            width="24"
+            height="24"
           />
         </div>
       </div>
@@ -90,8 +92,8 @@
 import { ref, computed, watch } from "vue";
 import type { FileVO } from "@/types/file";
 import { API_BASE_URL } from "@/constant";
-import { CheckCircleFilled } from "@ant-design/icons-vue";
 import { useSystemStore } from "@/store";
+import { Icon } from "@iconify/vue";
 
 // Props & Emits
 const props = defineProps<{

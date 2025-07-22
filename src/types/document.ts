@@ -1,5 +1,3 @@
-// ==================== 根文档相关类型 ====================
-
 export interface DocumentRootRequest {
   title: string;
   alias: string;
@@ -34,8 +32,6 @@ export interface DocumentRootVO {
   is_deleted: boolean;
   sort: number;
 }
-
-// ==================== 文档内容相关类型 ====================
 
 export interface DocumentContentRequest {
   document_id: string;
@@ -78,8 +74,6 @@ export interface DocumentContentVO {
   updated_at: string;
 }
 
-// ==================== 文档树相关类型 ====================
-
 export interface DocumentTreeVO {
   id: string;
   created_at: string;
@@ -93,22 +87,6 @@ export interface DocumentTreeVO {
   document_id: string;
   sort: number;
   children?: DocumentTreeVO[];
-}
-
-// ==================== 兼容性类型（保留原有类型） ====================
-
-export interface DocumentRequest {
-  title: string;
-  content: string;
-  document_type: string;
-  parent_id: string;
-  document_id: string;
-}
-
-export interface DocumentSaveRequest {
-  id: string;
-  title: string;
-  content: string;
 }
 
 export interface DocumentVO {
