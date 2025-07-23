@@ -71,6 +71,7 @@ declare module 'vue' {
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     FullScreen: typeof import('./src/components/Header/components/fullScreen/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
+    MdPhoto: typeof import('./src/components/MdWriter/plugins/md-photo.vue')['default']
     MdViewer: typeof import('./src/components/MdViewer/index.vue')['default']
     MdWriter: typeof import('./src/components/MdWriter/index.vue')['default']
     Photo: typeof import('./src/components/Input/photo.vue')['default']

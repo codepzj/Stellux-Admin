@@ -10,7 +10,7 @@
     class="!h-full"
   >
     <template #defToolbars>
-      <PhotoSelect @selected-picture="selectedPicture" />
+      <MdPhoto @selected-picture="selectedPicture" />
     </template>
   </MdEditor>
 </template>
@@ -20,7 +20,7 @@ import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { useVModel } from "@vueuse/core";
 import { useSystemStore } from "@/store";
-import PhotoSelect from "./plugins/photoSelect.vue";
+import MdPhoto from "./plugins/md-photo.vue";
 
 const props = defineProps({
   content: {
@@ -68,7 +68,7 @@ const toolbars = [
   "catalog",
 ];
 
-const selectedPicture = (picture) => {
+const selectedPicture = picture => {
   // 如果图片为空，则不添加
   if (!picture) return;
   content.value = content.value + `![图片](${picture})`;
