@@ -19,6 +19,4 @@ const editorState = reactive({
   codeTheme: "github",
 });
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

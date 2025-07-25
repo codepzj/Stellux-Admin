@@ -45,11 +45,7 @@
           v-if="selectedPhotos.includes(photo.url)"
           class="absolute top-1 right-1 z-10"
         >
-          <Icon
-            icon="flat-color-icons:ok"
-            width="24"
-            height="24"
-          />
+          <Icon icon="flat-color-icons:ok" width="24" height="24" />
         </div>
       </div>
     </div>

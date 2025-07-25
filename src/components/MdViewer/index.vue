@@ -9,7 +9,9 @@
       :showCodeRowNumber="editorState.showCodeRowNumber"
       :autoFoldThreshold="editorState.autoFoldThreshold"
     />
-    <div class="md:!w-1/4 !max-h-125 overflow-y-auto hidden md:block sticky top-10">
+    <div
+      class="md:!w-1/4 !max-h-125 overflow-y-auto hidden md:block sticky top-10"
+    >
       <a-anchor
         class="w-full !max-h-125"
         affixed

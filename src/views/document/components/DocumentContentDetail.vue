@@ -1,9 +1,7 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 文档信息头部 -->
-    <div
-      class="flex-shrink-0 border-b border-gray-200 dark:border-gray-700"
-    >
+    <div class="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {{ documentContent?.title || "文档详情" }}
@@ -30,9 +28,7 @@
                 </div>
               </div>
             </template>
-            <a-button type="link" size="small">
-              详情
-            </a-button>
+            <a-button type="link" size="small"> 详情 </a-button>
           </a-popover>
         </h2>
         <div class="flex items-center gap-2">
@@ -115,7 +111,8 @@ const formatDate = (dateString?: string) => {
 const handleEdit = () => {
   isEditing.value = !isEditing.value;
   if (isEditing.value) {
-    editingContent.value = editingContent.value || props.documentContent?.content || "";
+    editingContent.value =
+      editingContent.value || props.documentContent?.content || "";
   }
 };
 
