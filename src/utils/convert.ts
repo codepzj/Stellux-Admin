@@ -7,15 +7,18 @@ export function convertToTreeData(
   const map = new Map<string, any>();
   const roots: any[] = [];
 
+  // 先将所有节点放入map
   data.forEach(item => {
     map.set(item.id, {
       key: item.id,
       title: item.title,
       sort: item.sort ?? 1,
+      created_at: item.created_at,
       children: [],
     });
   });
 
+  // 构建树结构
   data.forEach(item => {
     const node = map.get(item.id);
     const parent = map.get(item.parent_id);
@@ -26,9 +29,19 @@ export function convertToTreeData(
     }
   });
 
-  // 递归排序每层children
+  // 递归排序每层children，先按sort升序，再按created_at升序
   function sortTree(nodes: any[]) {
-    nodes.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    nodes.sort((a, b) => {
+      const sortA = a.sort ?? 0;
+      const sortB = b.sort ?? 0;
+      if (sortA !== sortB) {
+        return sortA - sortB;
+      }
+      // created_at 升序
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateA - dateB;
+    });
     nodes.forEach(node => {
       if (node.children && node.children.length > 0) {
         sortTree(node.children);
@@ -36,6 +49,17 @@ export function convertToTreeData(
     });
   }
   sortTree(roots);
+
+  // 移除created_at字段，保持返回结构不变
+  function clean(nodes: any[]) {
+    nodes.forEach(node => {
+      delete node.created_at;
+      if (node.children && node.children.length > 0) {
+        clean(node.children);
+      }
+    });
+  }
+  clean(roots);
 
   return roots;
 }

@@ -107,21 +107,12 @@ export const restoreDocumentContentAPI = (
   return request.put(`/admin-api/document-content/restore/${id}`);
 };
 
-// 根据父级ID查询文档内容
-export const getDocumentContentByParentIdAPI = (
-  parentId: string
-): Promise<Response<DocumentContentVO[]>> => {
-  return request.get(
-    `/admin-api/document-content/all/parent-id?parent_id=${parentId}`
-  );
-};
-
 // 根据文档ID查询所有子文档内容
 export const getDocumentContentByDocumentIdAPI = (
   documentId: string
 ): Promise<Response<DocumentContentVO[]>> => {
   return request.get(
-    `/admin-api/document-content/all/document-id?document_id=${documentId}`
+    `/admin-api/document-content/all?document_id=${documentId}`
   );
 };
 
@@ -141,19 +132,12 @@ export const searchDocumentContentAPI = (
 
 // ==================== 公开接口 ====================
 
-// 获取所有公开文档
-export const getAllPublicDocumentAPI = (): Promise<
-  Response<DocumentRootVO[]>
-> => {
-  return request.get("/document/public");
-};
-
 // 获取文档内容列表(平铺数据，前端组装成树)
 export const getDocumentTreeDataAPI = (
   documentId: string
 ): Promise<Response<DocumentTreeVO[]>> => {
   return request.get(
-    `/admin-api/document-content/all/document-id?document_id=${documentId}`
+    `/admin-api/document-content/all?document_id=${documentId}`
   );
 };
 
@@ -161,7 +145,7 @@ export const getDocumentTreeDataAPI = (
 export const getRootDocumentPublicAPI = (
   id: string
 ): Promise<Response<DocumentRootVO>> => {
-  return request.get(`/document/root/${id}`);
+  return request.get(`/document/${id}`);
 };
 
 // 获取文档站点地图
