@@ -23,6 +23,7 @@ const postForm = ref<PostReq>({
   content: "",
   author: "",
   description: "",
+  alias: "",
   category_id: "",
   tags_id: [],
   is_publish: false,

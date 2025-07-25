@@ -7,6 +7,7 @@ export interface PostReq {
   content: string;
   author: string;
   description: string;
+  alias: string;
   category_id: string | undefined;
   tags_id: string[];
   is_top: boolean;
@@ -21,6 +22,7 @@ export interface PostVO {
   content: string;
   description: string;
   author: string;
+  alias: string;
   category_id: string;
   tags_id: string[];
   is_publish: boolean;
@@ -36,6 +38,7 @@ export interface PostDetailVO {
   content: string;
   author: string;
   description: string;
+  alias: string;
   category: string;
   tags: string[];
   thumbnail: string;

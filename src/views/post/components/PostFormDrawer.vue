@@ -32,6 +32,16 @@
 
         <a-row :gutter="16">
           <a-col :span="12">
+            <a-form-item label="别名" name="alias">
+              <a-input
+                v-model:value="postForm.alias"
+                placeholder="请输入别名"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col :span="12">
             <a-form-item label="分类" name="category_id">
               <a-select
                 v-model:value="postForm.category_id"
@@ -210,6 +220,7 @@ const rules = {
   title: [{ required: true, message: "请输入标题" }],
   content: [{ required: true, message: "请输入内容" }],
   author: [{ required: true, message: "请输入作者" }],
+  alias: [{ required: true, message: "请输入别名" }],
   category_id: [{ required: true, message: "请选择分类" }],
   tags_id: [
     { required: true, message: "请选择标签" },
@@ -248,6 +259,7 @@ const clearForm = () => {
     content: "",
     description: "",
     author: "",
+    alias: "",
     category_id: "",
     tags_id: [],
     is_publish: true,
