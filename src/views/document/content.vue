@@ -40,7 +40,7 @@
                     <template #overlay>
                       <a-menu v-if="isDir(key)">
                         <a-menu-item key="1" @click="handleEditModalOpen(key)"
-                          >编辑</a-menu-item
+                          >编辑目录</a-menu-item
                         >
                         <a-menu-item
                           key="2"
@@ -58,7 +58,7 @@
                       </a-menu>
                       <a-menu v-else>
                         <a-menu-item key="1" @click="handleEditModalOpen(key)"
-                          >编辑</a-menu-item
+                          >编辑文档</a-menu-item
                         >
                         <a-menu-item key="2" @click="deleteDocumentLeaf(key)"
                           >删除文档</a-menu-item

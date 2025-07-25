@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :open="visible"
-    title="编辑文档信息"
+    :title="documentContent?.is_dir ? '编辑目录' : '编辑文档'"
     @ok="handleOk"
     @cancel="handleCancel"
     ok-text="保存"
@@ -37,8 +37,8 @@
           </a-form-item>
         </a-col>
       </a-row>
-
-      <a-form-item label="描述" name="description">
+      <!-- 非目录才有描述 -->
+      <a-form-item v-if="!documentContent?.is_dir" label="描述" name="description">
         <a-textarea
           v-model:value="formData.description"
           placeholder="请输入描述"
