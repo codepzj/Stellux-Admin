@@ -4,14 +4,11 @@ import type {
   DocumentRootRequest,
   DocumentTreeVO,
   DocumentRootVO,
-  DocumentVO,
   DocumentRootEditRequest,
   DocumentContentRequest,
   DocumentContentEditRequest,
   DocumentContentVO,
 } from "@/types/document";
-
-// ==================== 根文档管理接口 ====================
 
 // 创建根文档
 export const createRootDocumentAPI = (
@@ -62,8 +59,6 @@ export const getRootDocumentByAliasAPI = (
 export const getRootDocumentListAPI = (params: any): Promise<Response<any>> => {
   return request.get("/admin-api/document/list", { params });
 };
-
-// ==================== 文档内容管理接口 ====================
 
 // 创建文档内容
 export const createDocumentContentAPI = (
@@ -130,8 +125,6 @@ export const searchDocumentContentAPI = (
   return request.get(`/admin-api/document-content/search?keyword=${keyword}`);
 };
 
-// ==================== 公开接口 ====================
-
 // 获取文档内容列表(平铺数据，前端组装成树)
 export const getDocumentTreeDataAPI = (
   documentId: string
@@ -139,25 +132,6 @@ export const getDocumentTreeDataAPI = (
   return request.get(
     `/admin-api/document-content/all?document_id=${documentId}`
   );
-};
-
-// 获取根文档
-export const getRootDocumentPublicAPI = (
-  id: string
-): Promise<Response<DocumentRootVO>> => {
-  return request.get(`/document/${id}`);
-};
-
-// 获取文档站点地图
-export const getDocumentSitemapAPI = (): Promise<Response<any>> => {
-  return request.get("/document/sitemap");
-};
-
-// 根据ID获取文档
-export const getDocumentByIdAPI = (
-  id: string
-): Promise<Response<DocumentVO>> => {
-  return request.get(`/document/${id}`);
 };
 
 // 批量删除文档

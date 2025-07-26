@@ -34,6 +34,7 @@ const postForm = ref<PostReq>({
 const getPost = async () => {
   const res = await getPostByIdAPI(postId as string);
   postForm.value = res.data;
+  console.log(postForm.value);
 };
 
 onMounted(() => {

@@ -5,7 +5,6 @@ import {
 } from "vue-router";
 
 import Layout from "@/layout/index.vue";
-import Dashboard from "@/views/dashboard/index.vue";
 import Login from "@/views/auth/login.vue";
 
 import { Icon } from "@iconify/vue";
@@ -14,17 +13,8 @@ export const routes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Layout,
+    redirect: "/post/create",
     children: [
-      {
-        path: "",
-        name: "Dashboard",
-        component: Dashboard,
-        meta: {
-          title: "仪表盘",
-          icon: () =>
-            h(Icon, { icon: "mage:dashboard", width: 18, height: 18 }),
-        },
-      },
       {
         path: "/user",
         name: "UserManagement",
@@ -121,15 +111,6 @@ export const routes: RouteRecordRaw[] = [
         component: () => import("@/views/document/overview.vue"),
       },
       {
-        path: "/friend",
-        name: "Friend",
-        meta: {
-          title: "友链",
-          icon: () => h(Icon, { icon: "uil:link", width: 18, height: 18 }),
-        },
-        component: () => import("@/views/friend/index.vue"),
-      },
-      {
         path: "file",
         name: "File",
         meta: {
@@ -139,25 +120,7 @@ export const routes: RouteRecordRaw[] = [
         },
         component: () => import("@/views/file/index.vue"),
       },
-      {
-        path: "setting",
-        name: "Setting",
-        meta: {
-          title: "设置",
-          icon: () => h(Icon, { icon: "uil:setting", width: 18, height: 18 }),
-        },
-        component: () => import("@/views/setting/index.vue"),
-      },
     ],
-  },
-  {
-    path: "/test",
-    name: "Test",
-    component: () => import("@/views/test/index.vue"),
-    meta: {
-      title: "测试",
-      icon: () => h(Icon, { icon: "uil:test", width: 18, height: 18 }),
-    },
   },
   {
     path: "/document",

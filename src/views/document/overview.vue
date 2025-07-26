@@ -321,7 +321,12 @@ const getAllDoc = async () => {
   loading.value = true;
   try {
     const res = await getRootDocumentListAPI({ page_no: 1, page_size: 100 });
-    docList.value = res.data.list || res.data;
+    docList.value = res.data.list.sort((a: DocumentRootVO, b: DocumentRootVO) => {
+      if (a.sort !== b.sort) {
+        return a.sort - b.sort;
+      }
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
   } catch (error) {
     message.error("获取文档列表失败");
   } finally {
