@@ -8,7 +8,6 @@ import { API_BASE_URL } from "@/constant";
 
 const request = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
 });
 
 // 请求拦截器
