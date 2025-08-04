@@ -3,7 +3,7 @@
     <MdPreview
       class="md:!w-3/4 w-full"
       :modelValue="content"
-      :theme="theme"
+      theme="light"
       :previewTheme="editorState.previewTheme"
       :codeTheme="editorState.codeTheme"
       :showCodeRowNumber="editorState.showCodeRowNumber"
@@ -28,9 +28,7 @@
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { parseMarkdownToAnchorItems } from "@/utils/tool";
-import { useSystemStore } from "@/store";
 
-const systemStore = useSystemStore();
 const props = defineProps({
   content: {
     type: String,
@@ -48,8 +46,6 @@ const editorState = ref({
 const onChange = (link: string) => {
   console.log("Anchor:OnChange", link);
 };
-
-const theme = computed(() => systemStore.themeMode);
 
 const anchorItems = computed(() => parseMarkdownToAnchorItems(props.content));
 </script>
