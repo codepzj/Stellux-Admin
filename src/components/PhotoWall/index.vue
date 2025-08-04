@@ -32,10 +32,7 @@
           v-lazy="photo.url"
           :alt="photo.name"
           :class="[
-            'w-full h-full object-fill cursor-pointer border transition-opacity duration-300 rounded-md overflow-hidden',
-            systemStore.themeMode === 'light'
-              ? 'border-zinc-200'
-              : 'border-zinc-800',
+            'w-full h-full object-fill cursor-pointer transition-opacity duration-300 rounded-md overflow-hidden',
             loadedImages[photo.url] ? 'opacity-100' : 'opacity-0',
           ]"
           @load="onImageLoad(photo.url)"
@@ -88,7 +85,6 @@
 import { ref, computed, watch } from "vue";
 import type { FileVO } from "@/types/file";
 import { API_BASE_URL } from "@/constant";
-import { useSystemStore } from "@/store";
 import { Icon } from "@iconify/vue";
 
 // Props & Emits
@@ -101,9 +97,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "selected-photos", photos: string[]): void;
 }>();
-
-// 全局状态
-const systemStore = useSystemStore();
 
 // 数据状态
 const selectedPhotos = ref<string[]>([]);

@@ -1,15 +1,13 @@
 <template>
   <div class="h-full flex flex-col">
     <!-- 文档信息头部 -->
-    <div class="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex-shrink-0 border-b border-gray-200">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900">
           {{ documentContent?.title || "文档详情" }}
           <a-popover title="文档信息" placement="right">
             <template #content>
-              <div
-                class="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400"
-              >
+              <div class="grid grid-cols-2 gap-4 text-sm text-gray-600">
                 <div>
                   <span class="font-medium">创建时间：</span>
                   {{ formatDate(documentContent?.created_at) }}

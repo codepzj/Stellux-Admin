@@ -4,14 +4,11 @@
       <template v-for="item in options" :key="item.name">
         <div
           class="h-12 px-4 my-1 rounded-md flex items-center justify-between"
-          :class="{
-            'bg-[#2e2e2e]': systemStore.themeMode === 'dark',
-            'bg-[#e5e7eb]': systemStore.themeMode === 'light',
-          }"
-          style="cursor: pointer"
           :style="{
-            background: item.name === active ? systemStore.themeColor : '',
+            background:
+              item.name === active ? systemStore.themeColor : '#e5e7eb',
             color: item.name === active ? '#fff' : '',
+            cursor: 'pointer',
           }"
           @click="handleTo"
           @mouseenter="handleMouse(item)"

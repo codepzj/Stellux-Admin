@@ -9,19 +9,6 @@
       />
     </Tooltip>
     <Drawer v-model:open="visible" placement="right" :closable="false">
-      <Descriptions title="主题风格" :column="5">
-        <Descriptions.Item v-for="theme in themeStyle" :key="theme.value">
-          <Tooltip :title="theme.label">
-            <div
-              class="style-checbox-item"
-              :class="{ active: themeMode === theme.value }"
-              @click="systemStore.setThemeMode(theme.value as 'light' | 'dark')"
-            >
-              <img :src="theme.value === 'light' ? LightTheme : DarkTheme" />
-            </div>
-          </Tooltip>
-        </Descriptions.Item>
-      </Descriptions>
       <Descriptions title="主题颜色" :column="9">
         <Descriptions.Item v-for="item in themeColors" :key="item.key">
           <div class="style-checbox-item">
@@ -46,17 +33,15 @@
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import { storeToRefs } from "pinia";
 import { Drawer, Descriptions, Tag, Tooltip } from "ant-design-vue";
-import { themeColors, themeStyle } from "./constant";
+import { themeColors } from "./constant";
 import { useSystemStore } from "@/store";
-import LightTheme from "@/assets/svg/light.svg";
-import DarkTheme from "@/assets/svg/dark.svg";
 
 defineOptions({
   name: "ProjectSetting",
 });
 
 const systemStore = useSystemStore();
-const { themeMode, themeColor } = storeToRefs(systemStore);
+const { themeColor } = storeToRefs(systemStore);
 const visible = ref(false);
 
 const getThemeColorVisible = (color: string) =>

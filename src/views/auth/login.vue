@@ -4,14 +4,7 @@
   >
     <a-card class="shadow-sm w-96">
       <div class="flex justify-center">
-        <img
-          class="my-6 w-32"
-          :src="
-            systemStore.themeMode === 'dark'
-              ? '/logo-dark.png'
-              : '/logo-light.png'
-          "
-        />
+        <img class="my-6 w-32" src="/logo-light.png" />
       </div>
       <a-form
         :model="LoginForm"
@@ -70,12 +63,11 @@ import type { LoginReq } from "@/types/user";
 import { userLoginAPI } from "@/api/user";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { useUserStore, useSystemStore } from "@/store";
+import { useUserStore } from "@/store";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 
 const router = useRouter();
 const userStore = useUserStore();
-const systemStore = useSystemStore();
 const LoginForm: LoginReq = reactive({
   username: "",
   password: "",
@@ -83,9 +75,8 @@ const LoginForm: LoginReq = reactive({
 
 const Login = async () => {
   const res = await userLoginAPI(LoginForm);
-  const { access_token, refresh_token } = res.data;
+  const { access_token } = res.data;
   userStore.setAccessToken(access_token);
-  userStore.setRefreshToken(refresh_token);
   message.success("登录成功");
   router.push("/");
 };

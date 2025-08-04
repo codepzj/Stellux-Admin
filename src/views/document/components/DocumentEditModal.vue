@@ -38,7 +38,11 @@
         </a-col>
       </a-row>
       <!-- 非目录才有描述 -->
-      <a-form-item v-if="!documentContent?.is_dir" label="描述" name="description">
+      <a-form-item
+        v-if="!documentContent?.is_dir"
+        label="描述"
+        name="description"
+      >
         <a-textarea
           v-model:value="formData.description"
           placeholder="请输入描述"

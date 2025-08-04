@@ -14,7 +14,6 @@ export interface LoginReq {
 
 export interface LoginVO {
   access_token: string; // 访问令牌
-  refresh_token: string; // 刷新令牌
 }
 
 export interface CreateUserReq {

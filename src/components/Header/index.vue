@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex h-full w-full items-center justify-between px-4 dark:bg-dark"
-  >
+  <div class="flex h-full w-full items-center justify-between px-4">
     <div class="w-full flex justify-between">
       <div class="flex items-center gap-4">
         <MenuUnfoldOutlined

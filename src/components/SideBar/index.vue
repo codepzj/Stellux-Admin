@@ -36,19 +36,18 @@ import { useRoute, useRouter } from "vue-router";
 import { routes } from "@/router";
 import type { VNodeChild } from "vue";
 import type { ItemType } from "ant-design-vue";
-import { useSidebarStore, useSystemStore } from "@/store";
+import { useSidebarStore } from "@/store";
 
 const sidebarStore = useSidebarStore();
-const systemStore = useSystemStore();
 const router = useRouter();
 const route = useRoute();
 const selectedKeys = ref<string[]>([]);
 const openKeys = ref<string[]>([]);
 
 const logoLoaded = ref(false);
+// 只保留 light 主题，去除暗黑相关逻辑
 const logoSrc = computed(
-  () =>
-    `/logo${sidebarStore.collapse ? "-sm" : ""}-${systemStore.themeMode === "dark" ? "dark" : "light"}.png`
+  () => `/logo${sidebarStore.collapse ? "-sm" : ""}-light.png`
 );
 const onLoad = () => {
   logoLoaded.value = true;

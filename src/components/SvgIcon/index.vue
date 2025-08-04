@@ -10,9 +10,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useSystemStore } from "@/store/modules/system";
-
-const systemStore = useSystemStore();
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -21,10 +18,9 @@ const props = defineProps({
   customClass: { type: String, default: "" },
 });
 
-// 动态计算颜色
 const iconColor = computed(() => {
   if (props.color === "currentColor") {
-    return systemStore.themeMode === "dark" ? "#ccc" : "#333";
+    return "#333";
   }
   return props.color;
 });

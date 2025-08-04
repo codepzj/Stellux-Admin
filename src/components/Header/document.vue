@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-8 w-full items-center justify-between px-4 dark:bg-dark">
+  <div class="flex h-8 w-full items-center justify-between px-4">
     <!-- 左侧 Logo 区域 -->
     <div
       :class="[
@@ -9,7 +9,7 @@
     >
       <div
         v-if="$route.name === 'DocumentContent'"
-        class="cursor-pointer flex items-center gap-1 px-2 py-0.5 my-1 rounded-md border border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+        class="cursor-pointer flex items-center gap-1 px-2 py-0.5 my-1 rounded-md border border-zinc-300"
         @click="$router.push({ name: 'DocumentOverview' })"
       >
         <Icon icon="icon-park-outline:back" width="16" height="16" />

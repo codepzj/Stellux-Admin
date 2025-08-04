@@ -23,8 +23,8 @@
       <div class="flex justify-end my-4">
         <!-- 分页器 只有当总页数大于1时才显示 -->
         <a-pagination
-          v-if="page.total_count > page.page_size"
           v-model:current="page.page_no"
+          v-model:page-size="page.page_size"
           :total="page.total_count"
           show-less-items
           @change="fetchThumbnails"
@@ -78,7 +78,7 @@ const thumbnailModalOpen = useVModel(props, "open", emit);
  */
 const page = reactive<PageData<FileVO>>({
   page_no: 1,
-  page_size: 24,
+  page_size: 18,
   total_count: 0,
   total_page: 0,
   list: [],

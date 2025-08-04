@@ -69,9 +69,7 @@
               </div>
             </div>
             <div class="flex justify-start gap-2 px-2 py-4">
-              <div
-                class="text-sm text-zinc-500 dark:text-zinc-200 line-clamp-2"
-              >
+              <div class="text-sm text-zinc-500 line-clamp-2">
                 {{ doc.description }}
               </div>
             </div>
@@ -152,7 +150,7 @@
             </div>
             <div
               v-else
-              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
+              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
               @click="createThumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
@@ -229,7 +227,7 @@
             </div>
             <div
               v-else
-              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
+              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
               @click="editThumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
@@ -321,12 +319,16 @@ const getAllDoc = async () => {
   loading.value = true;
   try {
     const res = await getRootDocumentListAPI({ page_no: 1, page_size: 100 });
-    docList.value = res.data.list.sort((a: DocumentRootVO, b: DocumentRootVO) => {
-      if (a.sort !== b.sort) {
-        return a.sort - b.sort;
+    docList.value = res.data.list.sort(
+      (a: DocumentRootVO, b: DocumentRootVO) => {
+        if (a.sort !== b.sort) {
+          return a.sort - b.sort;
+        }
+        return (
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
       }
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    });
+    );
   } catch (error) {
     message.error("获取文档列表失败");
   } finally {

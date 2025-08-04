@@ -7,78 +7,92 @@
     title="附件上传"
     width="100%"
     wrap-class-name="full-modal"
-    :showUploadList="false"
     :footer="null"
     :destroyOnClose="true"
-    @drop="handleDrop"
     @cancel="handleCancel"
   >
-    <div class="flex flex-col items-center">
-      <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="1" tab="文件上传"></a-tab-pane>
-        <a-tab-pane key="2" tab="文件夹上传"></a-tab-pane>
-      </a-tabs>
-      <a-upload-dragger
-        :file-list="fileList"
-        :multiple="true"
-        :beforeUpload="handleBeforeUpload"
-        list-type="picture"
-        :directory="activeKey === '2'"
-        class="w-3/5 h-[280px] inline-block"
-      >
-        <div class="flex flex-col items-center justify-center h-full">
-          <p class="ant-upload-drag-icon">
-            <inbox-outlined></inbox-outlined>
-          </p>
-          <p class="ant-upload-text hidden md:block">
-            点击或拖拽{{ activeKey === "1" ? "文件" : "文件夹" }}到此区域上传
-          </p>
-          <p class="ant-upload-hint hidden md:block">支持单个或批量上传</p>
-        </div>
-      </a-upload-dragger>
+    <div class="flex flex-col items-center mt-10">
+      <div id="uppy-dashboard" class="w-3/5"></div>
     </div>
   </a-modal>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { uploadFilesAPI } from "@/api/file";
-import { message } from "ant-design-vue";
-import { InboxOutlined } from "@ant-design/icons-vue";
-import type { UploadProps } from "ant-design-vue/lib/upload/interface";
+import { useUserStore } from "@/store";
+import Uppy from "@uppy/core";
+import Dashboard from "@uppy/dashboard";
+import ImageEditor from "@uppy/image-editor";
+import Compressor from "@uppy/compressor";
+import XHR from "@uppy/xhr-upload";
+import ZhHans from "@uppy/locales/lib/zh_CN";
+
+import "@uppy/core/dist/style.min.css";
+import "@uppy/dashboard/dist/style.min.css";
+import "@uppy/image-editor/dist/style.min.css";
 
 const open = ref<boolean>(false);
-const fileList = ref<UploadProps["fileList"]>([]);
-const activeKey = ref("1");
+const userStore = useUserStore();
+let uppy: Uppy | null = null;
 
-const handleBeforeUpload: UploadProps["beforeUpload"] = async (
-  file,
-  FileList
-) => {
-  fileList.value = [...(fileList.value || []), file];
-  if (fileList.value.length === FileList.length) {
-    message.loading({
-      content: "图片上传中...",
-      duration: 0,
-    });
-    try {
-      const res = await uploadFilesAPI({
-        files: fileList.value,
-      });
-      message.success({
-        content: res.msg,
-      });
-      fileList.value = [];
-    } catch (error) {
-      fileList.value = [];
-    }
+const initUppy = () => {
+  if (uppy) {
+    // 清理之前的uppy实例
+    uppy = null;
   }
-  return false;
+
+  uppy = new Uppy({
+    locale: ZhHans,
+    restrictions: {
+      maxFileSize: 1024 * 1024 * 10,
+      maxNumberOfFiles: 30,
+      minNumberOfFiles: 1,
+      allowedFileTypes: [
+        "image/*",
+        "video/*",
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+        ".gif",
+        ".mp3",
+        ".mp4",
+      ],
+    },
+  })
+    .use(Dashboard, {
+      inline: true,
+      target: "#uppy-dashboard",
+      showProgressDetails: true,
+      width: "100%",
+    })
+    .use(ImageEditor, {
+      cropperOptions: {
+        viewMode: 1,
+        scalable: true,
+        zoomable: true,
+      },
+    })
+    .use(Compressor, {
+      quality: 0.8,
+    })
+    .use(XHR, {
+      endpoint: `${import.meta.env.VITE_API_URL}/admin-api/file/upload`,
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${userStore.access_token}`,
+      },
+    });
 };
 
 const showModal = () => {
   open.value = true;
-  fileList.value = [];
+  // 延迟初始化uppy，确保DOM已经渲染
+  setTimeout(() => {
+    initUppy();
+    uppy?.upload().then(res => {
+      console.log(res);
+    });
+  });
 };
 
 const emit = defineEmits<{
@@ -87,14 +101,17 @@ const emit = defineEmits<{
 
 const handleCancel = () => {
   open.value = false;
+  if (uppy) {
+    uppy = null;
+  }
   emit("close");
-  fileList.value = [];
 };
 
-const handleDrop = (e: any) => {
-  console.log(e);
-  fileList.value = [...(fileList.value || []), e.file];
-};
+onUnmounted(() => {
+  if (uppy) {
+    uppy = null;
+  }
+});
 </script>
 
 <style lang="scss">
@@ -118,5 +135,18 @@ const handleDrop = (e: any) => {
 
 ::-webkit-scrollbar {
   width: 8px;
+}
+
+// uppy样式调整
+#uppy-dashboard {
+  .uppy-Dashboard {
+    border: 2px dashed #d9d9d9;
+    border-radius: 6px;
+    background: #fafafa;
+  }
+
+  .uppy-Dashboard-dropzone {
+    border: none;
+  }
 }
 </style>

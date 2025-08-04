@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full bg-white dark:bg-[#141414]">
+  <div class="flex flex-col h-full bg-white">
     <div class="h-8">
       <DocumentHeader />
     </div>

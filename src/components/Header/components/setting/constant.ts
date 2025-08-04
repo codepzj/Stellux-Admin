@@ -1,14 +1,3 @@
-export const themeStyle = [
-  {
-    label: "亮色主题风格",
-    value: "light",
-  },
-  {
-    label: "暗色主题风格",
-    value: "dark",
-  },
-];
-
 /** 主题色 */
 export const themeColors = [
   {

@@ -103,7 +103,7 @@
             </div>
             <div
               v-else
-              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400 dark:text-zinc-600"
+              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
               @click="thumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
