@@ -12,7 +12,7 @@
     @cancel="handleCancel"
   >
     <div class="flex flex-col items-center mt-10">
-      <div id="uppy-dashboard" class="w-3/5"></div>
+      <div id="uppy-dashboard" class="w-4/5"></div>
     </div>
   </a-modal>
 </template>
@@ -45,7 +45,6 @@ const initUppy = () => {
     restrictions: {
       maxFileSize: 1024 * 1024 * 10,
       maxNumberOfFiles: 30,
-      minNumberOfFiles: 1,
       allowedFileTypes: [
         "image/*",
         "video/*",
@@ -89,9 +88,6 @@ const showModal = () => {
   // 延迟初始化uppy，确保DOM已经渲染
   setTimeout(() => {
     initUppy();
-    uppy?.upload().then(res => {
-      console.log(res);
-    });
   });
 };
 
