@@ -1,6 +1,5 @@
 import axios from "axios";
 import { message } from "ant-design-vue";
-import { Code } from "@/global";
 import { API_BASE_URL } from "@/constant";
 import { useUserStore } from "@/store";
 
@@ -24,8 +23,7 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   async response => {
-    if (response.data.code !== Code.RequestSuccess) {
-      console.log(response.data);
+    if (response.data.code !== 0) {
       const errMessage = response.data.msg || "操作失败";
       message.error(errMessage);
       return Promise.reject(new Error(errMessage));
