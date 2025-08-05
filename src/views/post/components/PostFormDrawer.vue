@@ -221,11 +221,7 @@ const rules = {
   content: [{ required: true, message: "请输入内容" }],
   author: [{ required: true, message: "请输入作者" }],
   alias: [{ required: true, message: "请输入别名" }],
-  category_id: [{ required: true, message: "请选择分类" }],
-  tags_id: [
-    { required: true, message: "请选择标签" },
-    { validator: tagsIDValidator },
-  ],
+  tags_id: [{ validator: tagsIDValidator }],
 };
 
 // 分类 / 标签
