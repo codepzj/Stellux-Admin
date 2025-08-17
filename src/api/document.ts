@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { Response } from "@/types/dto";
+import type { PageResponse, Response } from "@/types/dto";
 import type {
   DocumentRootRequest,
   DocumentTreeVO,
@@ -58,6 +58,13 @@ export const getRootDocumentByAliasAPI = (
 // 获取根文档列表
 export const getRootDocumentListAPI = (params: any): Promise<Response<any>> => {
   return request.get("/admin-api/document/list", { params });
+};
+
+// 获取文档回收箱列表
+export const getDocumentBinListAPI = (
+  params: any
+): Promise<PageResponse<DocumentRootVO>> => {
+  return request.get("/admin-api/document/bin-list", { params });
 };
 
 // 创建文档内容

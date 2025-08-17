@@ -34,17 +34,7 @@
           </a-input-password>
         </a-form-item>
 
-        <a-form-item>
-          <a-form-item name="remember" no-style>
-            <a-checkbox class="text-sm">记住我</a-checkbox>
-          </a-form-item>
-          <span class="float-right space-x-2 w-32">
-            <a class="text-sm" href="">忘记密码</a>
-            <a class="text-sm" href="">立即注册</a>
-          </span>
-        </a-form-item>
-
-        <a-form-item class="flex justify-center">
+        <a-form-item class="flex justify-center !mt-12">
           <a-button
             :disabled="disabled"
             type="primary"

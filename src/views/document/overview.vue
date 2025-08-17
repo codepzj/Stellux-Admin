@@ -1,6 +1,7 @@
 <template>
   <div class="h-full">
-    <div class="flex justify-end">
+    <div class="flex justify-end gap-2">
+      <a-button @click="$router.push({ name: 'DocumentBin' })">回收箱</a-button>
       <a-button type="primary" @click="showModal = true">新增文档</a-button>
     </div>
     <a-skeleton :loading="loading" active>

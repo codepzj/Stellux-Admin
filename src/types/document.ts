@@ -23,11 +23,11 @@ export interface DocumentRootVO {
   id: string;
   created_at: string;
   updated_at: string;
+  deleted_at: string;
   title: string;
   alias: string;
   description: string;
   thumbnail: string;
-  document_type: string;
   is_public: boolean;
   is_deleted: boolean;
   sort: number;
@@ -87,16 +87,4 @@ export interface DocumentTreeVO {
   document_id: string;
   sort: number;
   children?: DocumentTreeVO[];
-}
-
-export interface DocumentVO {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  title: string;
-  content: string;
-  document_type: string;
-  is_public: boolean;
-  parent_id: string;
-  document_id: string;
 }

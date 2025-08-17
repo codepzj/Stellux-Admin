@@ -103,12 +103,30 @@ export const routes: RouteRecordRaw[] = [
       },
       {
         path: "/document",
-        name: "DocumentOverview",
+        name: "Document",
         meta: {
           title: "文档",
           icon: () => h(Icon, { icon: "fe:document", width: 18, height: 18 }),
         },
-        component: () => import("@/views/document/overview.vue"),
+        redirect: { name: "DocumentOverview" },
+        children: [
+          {
+            path: "overview",
+            name: "DocumentOverview",
+            component: () => import("@/views/document/overview.vue"),
+            meta: {
+              title: "列表页",
+            },
+          },
+          {
+            path: "bin",
+            name: "DocumentBin",
+            component: () => import("@/views/document/bin.vue"),
+            meta: {
+              title: "回收箱",
+            },
+          },
+        ],
       },
       {
         path: "file",
@@ -123,13 +141,13 @@ export const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: "/document",
-    name: "Document",
+    path: "/document/content",
+    name: "DocumentContent",
     component: () => import("@/views/document/index.vue"),
     children: [
       {
-        path: "content/:id",
-        name: "DocumentContent",
+        path: ":id",
+        name: "DocumentContentDetail",
         component: () => import("@/views/document/content.vue"),
         meta: {
           keepAlive: true,
