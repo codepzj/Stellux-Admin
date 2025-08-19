@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <a-card class="h-full">
     <a-page-header title="用户列表" class="!px-0">
       <template #extra>
         <a-button type="primary" @click="onHandleCreate">新增用户</a-button>
@@ -102,7 +102,7 @@
         </a-form-item>
       </a-form>
     </a-modal>
-  </div>
+  </a-card>
 </template>
 
 <script lang="ts" setup>

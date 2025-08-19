@@ -8,7 +8,7 @@
     >
       <template #extra>
         <a-input-search
-          v-model:value="page.keyword"
+          v-model:value="pageParam.keyword"
           placeholder="搜索标题 / 描述 / 标签"
           style="width: 240px"
           :loading="searchLoading"
@@ -168,11 +168,11 @@
     </a-table>
     <div class="flex justify-end !my-4">
       <a-pagination
-        v-model:current="page.page_no"
+        v-model:current="pageParam.page_no"
         :total="totalCount"
-        :page-size="page.page_size"
+        :page-size="pageParam.page_size"
         :page-size-options="pageSizeOptions"
-        @change="onPageChange"
+        @change="onPageSizeChange"
         show-size-changer
       >
         <template #buildOptionText="props">
@@ -217,7 +217,7 @@ const props = defineProps<{
 }>();
 
 const pageSizeOptions = ref<string[]>(["10", "20", "30", "40", "50"]);
-const page = reactive<PageReq>({
+const pageParam = reactive<PageReq>({
   page_no: 1,
   page_size: 10,
   keyword: "",
@@ -239,13 +239,13 @@ const getPostList = async () => {
     let res: PageResponse<PostDetailVO>;
     switch (props.type) {
       case "publish":
-        res = await getPublishPostDetailListAPI(page);
+        res = await getPublishPostDetailListAPI(pageParam);
         break;
       case "draft":
-        res = await getDraftPostDetailListAPI(page);
+        res = await getDraftPostDetailListAPI(pageParam);
         break;
       case "bin":
-        res = await getBinPostDetailListAPI(page);
+        res = await getBinPostDetailListAPI(pageParam);
         break;
     }
     postList.value = res.data.list;
@@ -289,7 +289,7 @@ const onHandleRestoreSelected = async () => {
 
 const onSearch = async () => {
   searchLoading.value = true;
-  page.page_no = 1;
+  pageParam.page_no = 1;
   await getPostList();
   searchLoading.value = false;
 };
@@ -310,8 +310,9 @@ const onHandleDelete = async (record: PostDetailVO) => {
   await getPostList();
 };
 
-const onPageChange = async (pageNo: number) => {
-  page.page_no = pageNo;
+const onPageSizeChange = async (_page: number, pageSize: number) => {
+  pageParam.page_no = 1;
+  pageParam.page_size = pageSize;
   await getPostList();
 };
 

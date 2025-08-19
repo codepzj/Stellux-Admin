@@ -22,6 +22,7 @@ export const routes: RouteRecordRaw[] = [
           title: "用户",
           icon: () => h(Icon, { icon: "uil:user", width: 18, height: 18 }),
         },
+        redirect: { name: "UserList" },
         children: [
           {
             path: "list",

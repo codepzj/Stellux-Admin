@@ -1,15 +1,16 @@
 <template>
-  <div class="overflow-hidden py-8">
+  <a-card class="h-full">
     <a-tabs
       v-model:activeKey="activeKey"
       tab-position="left"
       @change="(key: string) => $router.push({ name: key })"
+      class="!mt-8"
     >
       <a-tab-pane v-for="item in tabMeta" :key="item.key" :tab="item.title">
         <router-view></router-view>
       </a-tab-pane>
     </a-tabs>
-  </div>
+  </a-card>
 </template>
 
 <script lang="ts" setup>
