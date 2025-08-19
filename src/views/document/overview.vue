@@ -32,9 +32,6 @@
                 </span>
                 <SvgIcon name="global" :size="14" v-if="doc.is_public" />
                 <SvgIcon name="lock" :size="14" v-else />
-                <a-tag v-if="doc.is_deleted" color="red" size="small"
-                  >已删除</a-tag
-                >
               </div>
               <div class="cursor-pointer">
                 <a-dropdown :trigger="['click']" placement="bottomRight">
@@ -43,15 +40,8 @@
                       <a-menu-item @click="handleEdit(doc.id)"
                         >编辑</a-menu-item
                       >
-                      <a-menu-item
-                        v-if="!doc.is_deleted"
-                        @click="handleSoftDelete(doc.id)"
-                        >软删除</a-menu-item
-                      >
-                      <a-menu-item
-                        v-if="doc.is_deleted"
-                        @click="handleRestore(doc.id)"
-                        >恢复</a-menu-item
+                      <a-menu-item @click="handleSoftDelete(doc.id)"
+                        >删除</a-menu-item
                       >
                       <a-popconfirm
                         title="确定永久删除该文档吗？此操作不可恢复！"
@@ -258,7 +248,6 @@ import {
   updateRootDocumentAPI,
   getRootDocumentListAPI,
   softDeleteRootDocumentAPI,
-  restoreRootDocumentAPI,
 } from "@/api/document";
 import type {
   DocumentRootEditRequest,
@@ -367,13 +356,6 @@ const handleSoftDelete = async (id: string) => {
   await softDeleteRootDocumentAPI(id);
   await getAllDoc();
   message.success("文档软删除成功");
-};
-
-// 恢复文档
-const handleRestore = async (id: string) => {
-  await restoreRootDocumentAPI(id);
-  await getAllDoc();
-  message.success("文档恢复成功");
 };
 
 // 清空新增文档
