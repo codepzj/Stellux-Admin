@@ -23,7 +23,9 @@
           />
         </template>
         <template v-else-if="column.dataIndex === 'action'">
-          <a-button type="link" @click="console.log(record)">恢复</a-button>
+          <a-button type="link" @click="handleRestore(record.id)"
+            >恢复</a-button
+          >
           <a-button type="link" @click="console.log(record)" danger
             >删除</a-button
           >
@@ -34,11 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { getDocumentBinListAPI } from "@/api/document";
+import { getDocumentBinListAPI, restoreRootDocumentAPI } from "@/api/document";
 import type { DocumentRootVO } from "@/types/document";
 import { onMounted, ref } from "vue";
 import dayjs from "dayjs";
 import ImgFallback from "@/assets/png/img-fallback.png";
+import { message } from "ant-design-vue";
 
 const activeKey = ref("1");
 const loading = ref(false);
@@ -53,6 +56,12 @@ const getDocList = async () => {
 
   docList.value = res.data.list;
   loading.value = false;
+};
+
+const handleRestore = async (id: string) => {
+  await restoreRootDocumentAPI(id);
+  await getDocList();
+  message.success("恢复文档成功");
 };
 
 const columns = ref([

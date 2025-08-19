@@ -23,7 +23,7 @@
                   class="text-lg font-bold cursor-pointer"
                   @click="
                     $router.push({
-                      name: 'DocumentContent',
+                      name: 'DocumentContentDetail',
                       params: { id: doc.id },
                     })
                   "
