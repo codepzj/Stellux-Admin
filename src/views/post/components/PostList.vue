@@ -311,7 +311,6 @@ const onHandleDelete = async (record: PostDetailVO) => {
 };
 
 const onPageSizeChange = async (_page: number, pageSize: number) => {
-  pageParam.page_no = 1;
   pageParam.page_size = pageSize;
   await getPostList();
 };
