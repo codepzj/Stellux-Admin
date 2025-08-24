@@ -2,6 +2,8 @@ import axios from "axios";
 import { message } from "ant-design-vue";
 import { API_BASE_URL } from "@/constant";
 import { useUserStore } from "@/store";
+import { clearStore } from "./clear";
+import router from "@/router";
 
 const request = axios.create({
   baseURL: API_BASE_URL,
@@ -34,6 +36,11 @@ request.interceptors.response.use(
   error => {
     if (!error.response) {
       message.error("网络错误，请稍后重试");
+    } else if (error.response.data.code === 401) {
+      clearStore();
+      message.error("登录已过期，请重新登录");
+      router.replace({ name: "Login" });
+      return Promise.reject(new Error("登录已过期"));
     } else {
       message.error(error.response.data.msg || "操作失败");
     }
