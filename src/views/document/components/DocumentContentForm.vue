@@ -28,8 +28,8 @@
         </a-form-item>
       </a-col>
     </a-row>
-
-    <a-form-item label="描述" name="description">
+    <!-- 描述【非目录】 -->
+    <a-form-item v-if="!formData.is_dir" label="描述" name="description">
       <a-textarea
         v-model:value="formData.description"
         placeholder="请输入描述"
@@ -64,7 +64,7 @@
     <a-form-item label="父级目录" name="parent_id">
       <!-- field-names 用于设置树形选择器的字段名, 兼容antdv的treeData格式 -->
       <a-tree-select
-        defaultValue="根目录"
+        v-model:value="formData.parent_id"
         :tree-data="parent_tree_data"
         placeholder="请选择父级目录"
         allow-clear
@@ -75,21 +75,12 @@
         @change="onSelectChange"
       />
     </a-form-item>
-
-    <a-form-item
-      v-if="!formData.is_dir && props.document_content"
-      label="内容"
-      name="content"
-    >
-      <MdWriter v-model:content="formData.content" mode="auto" />
-    </a-form-item>
   </a-form>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from "vue";
 import type { FormInstance, TreeProps } from "ant-design-vue";
-import MdWriter from "@/components/MdWriter/index.vue";
 import type {
   DocumentContentRequest,
   DocumentContentVO,
@@ -145,7 +136,6 @@ const rules = {
 // 监听父级目录变化
 const onSelectChange = (value: string) => {
   formData.parent_id = value;
-  console.log(formData);
 };
 
 // 监听文档内容变化，用于编辑模式
@@ -175,18 +165,35 @@ watch(
     if (!formData.parent_id || formData.parent_id === props.document_id) {
       formData.parent_id = newId;
     }
-  }
+  },
+  { immediate: true }
 );
 
 // 监听parentId变化
 watch(
   () => props.parent_id,
   newParentId => {
+    console.log(newParentId);
     if (newParentId) {
       formData.parent_id = newParentId;
+      console.log(formData);
     }
-  }
+  },
+  { immediate: true }
 );
+
+// 监听is_dir变化
+watch(
+  () => props.is_dir,
+  newIsDir => {
+    formData.is_dir = newIsDir;
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  console.log(props);
+});
 
 // 提交表单
 const submit = async () => {
@@ -212,10 +219,6 @@ const resetFields = () => {
   formData.is_dir = false;
   formData.sort = 1;
 };
-
-onMounted(() => {
-  console.log(props.parent_tree_data);
-});
 
 // 暴露方法给父组件
 defineExpose({

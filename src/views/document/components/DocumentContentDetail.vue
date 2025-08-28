@@ -59,7 +59,10 @@
       <div v-if="editingContent" class="prose max-w-none">
         <MdViewer :content="editingContent" />
       </div>
-      <div v-else class="text-gray-500 text-center py-8">
+      <div
+        v-else
+        class="h-full flex flex-col items-center justify-center text-center text-gray-500 py-8"
+      >
         <Icon icon="ant-design:file-text-outlined" class="text-2xl mb-2" />
         <p>暂无内容</p>
       </div>

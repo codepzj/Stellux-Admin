@@ -61,13 +61,27 @@
           class="w-full"
         />
       </a-form-item>
+      <a-form-item label="父级目录" name="parent_id">
+        <!-- field-names 用于设置树形选择器的字段名, 兼容antdv的treeData格式 -->
+        <a-tree-select
+          v-model:value="formData.parent_id"
+          :tree-data="parent_tree_data"
+          placeholder="请选择父级目录"
+          allow-clear
+          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+          tree-default-expand-all
+          :field-names="{ children: 'children', label: 'title', value: 'key' }"
+          tree-node-filter-prop="title"
+          @change="onSelectChange"
+        />
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from "vue";
-import type { FormInstance } from "ant-design-vue";
+import type { FormInstance, TreeProps } from "ant-design-vue";
 import { message } from "ant-design-vue";
 import type { DocumentContentVO } from "@/types/document";
 import { updateDocumentContentAPI } from "@/api/document";
@@ -75,6 +89,7 @@ import { updateDocumentContentAPI } from "@/api/document";
 const props = defineProps<{
   visible: boolean;
   documentContent?: DocumentContentVO;
+  parent_tree_data?: TreeProps["treeData"];
 }>();
 
 const emit = defineEmits<{
@@ -89,6 +104,7 @@ const formData = reactive({
   alias: "",
   description: "",
   sort: 0,
+  parent_id: "",
 });
 
 const rules = {
@@ -123,6 +139,7 @@ watch(
       formData.alias = newContent.alias;
       formData.description = newContent.description;
       formData.sort = newContent.sort;
+      formData.parent_id = newContent.parent_id;
     }
   },
   { immediate: true }
@@ -145,7 +162,7 @@ const handleOk = async () => {
       content: props.documentContent.content,
       description: formData.description,
       alias: formData.alias,
-      parent_id: props.documentContent.parent_id,
+      parent_id: formData.parent_id,
       is_dir: props.documentContent.is_dir,
       sort: formData.sort,
     });
@@ -170,6 +187,10 @@ const handleOk = async () => {
 
 const handleCancel = () => {
   emit("update:visible", false);
+};
+
+const onSelectChange = (value: string) => {
+  formData.parent_id = value;
 };
 </script>
 

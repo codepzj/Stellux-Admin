@@ -10,7 +10,13 @@
                   class="cursor-pointer"
                   icon="ant-design:file-add-outlined"
                   height="18"
-                  @click="openCreateFileOrFolderModal('file', document_id)"
+                  @click="
+                    openCreateFileOrFolderModal(
+                      'file',
+                      document_id,
+                      document_id
+                    )
+                  "
                 />
               </a-tooltip>
               <a-tooltip title="新增目录">
@@ -18,7 +24,9 @@
                   class="cursor-pointer"
                   icon="ant-design:folder-add-outlined"
                   height="20"
-                  @click="openCreateFileOrFolderModal('dir', document_id)"
+                  @click="
+                    openCreateFileOrFolderModal('dir', document_id, document_id)
+                  "
                 />
               </a-tooltip>
             </div>
@@ -197,6 +205,9 @@
     <DocumentEditModal
       :visible="editModal.visible"
       :document-content="editModal.documentContent"
+      :parent_tree_data="
+        getParentTreeFilterKey(treeData, editModal.documentContent?.id || '')
+      "
       @update:visible="editModal.visible = $event"
       @success="handleEditSuccess"
     />
@@ -290,11 +301,12 @@ const openCreateModal = (
 
 const openCreateFileOrFolderModal = (
   type: "dir" | "file",
-  document_id: string
+  document_id: string,
+  parent_id: string
 ) => {
   createFileOrFolderModal.visible = true;
   createFileOrFolderModal.type = type;
-  createFileOrFolderModal.parent_id = "";
+  createFileOrFolderModal.parent_id = parent_id;
   createFileOrFolderModal.document_id = document_id;
   createFileOrFolderModal.input = "";
   createFileOrFolderModal.title = type === "dir" ? "新增目录" : "新增文档";
@@ -341,6 +353,7 @@ function filterDirTree(
     }));
 }
 
+// 获取父级目录树形数据
 const getParentTreeData = (
   data: TreeProps["treeData"] = []
 ): TreeProps["treeData"] => {
@@ -351,6 +364,35 @@ const getParentTreeData = (
       children: filterDirTree(data),
     },
   ];
+};
+
+// 获取父级目录树形数据，传入key，并排除key下所有直接子目录
+const getParentTreeFilterKey = (
+  data: TreeProps["treeData"] = [],
+  key: string
+): TreeProps["treeData"] => {
+  // 获取完整的父级目录树
+  const allTreeData = getParentTreeData(data);
+
+  // 递归过滤掉key节点及其所有子节点
+  function filterNode(
+    nodes: TreeProps["treeData"] = []
+  ): TreeProps["treeData"] {
+    return nodes
+      .filter(item => item.key !== key)
+      .map(item => ({
+        ...item,
+        children: item.children ? filterNode(item.children) : [],
+      }));
+  }
+
+  // allTreeData 可能为 undefined，需做判空处理
+  if (!allTreeData) return [];
+  // allTreeData 是一个数组，通常只有一个根节点
+  return allTreeData.map(root => ({
+    ...root,
+    children: root.children ? filterNode(root.children) : [],
+  }));
 };
 
 const getDocumentTree = async (id: string) => {
@@ -410,7 +452,7 @@ const handleEditModalOpen = async (id: string) => {
   }
 };
 
-const handleEditSuccess = (updatedContent: DocumentContentVO) => {
+const handleEditSuccess = async (updatedContent: DocumentContentVO) => {
   // 更新本地数据
   const index = docTreeData.value.findIndex(
     item => item.id === updatedContent.id
@@ -419,8 +461,7 @@ const handleEditSuccess = (updatedContent: DocumentContentVO) => {
     docTreeData.value[index] = {
       ...docTreeData.value[index],
       title: updatedContent.title,
-      sort: updatedContent.sort, // 关键：同步更新排序字段
-      // 其他字段如有需要也可同步
+      sort: updatedContent.sort,
     };
   }
 
@@ -434,6 +475,9 @@ const handleEditSuccess = (updatedContent: DocumentContentVO) => {
   treeData.value = convertToTreeData(docTreeData.value);
   selectTreeData.value = convertToSelectTree(docTreeData.value);
   selectTreeData.value = filterTree(selectTreeData.value);
+
+  // 重新生成选择树形数据
+  await getDocumentTree(route.params.id as string);
 
   message.success("编辑成功");
 };
