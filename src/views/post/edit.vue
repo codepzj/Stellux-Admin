@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <a-card class="h-full overflow-y-auto">
     <PostContentWriter mode="edit" :postForm="postForm" />
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">

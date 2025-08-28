@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <div class="h-8">
+    <div class="h-8 mt-2">
       <DocumentHeader />
     </div>
     <div class="overflow-hidden h-full">

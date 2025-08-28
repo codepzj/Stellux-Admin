@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <a-card class="h-full overflow-y-auto">
     <a-page-header class="!px-0">
       <div class="flex justify-between">
         <a-segmented v-model:value="activeKey" :options="data" />
@@ -32,7 +32,7 @@
         </template>
       </template>
     </a-table>
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,7 @@
 <template>
-  <PostList :type="postType" />
+  <a-card class="h-full overflow-y-auto">
+    <PostList :type="postType" />
+  </a-card>
 </template>
 <script setup lang="ts">
 import PostList from "./components/PostList.vue";

@@ -1,5 +1,7 @@
 <template>
-  <PostContentWriter mode="create" v-model:post-form="postForm" />
+  <a-card class="h-full overflow-y-auto">
+    <PostContentWriter mode="create" v-model:post-form="postForm" />
+  </a-card>
 </template>
 
 <script setup lang="ts">

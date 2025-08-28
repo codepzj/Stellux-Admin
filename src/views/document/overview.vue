@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <a-card class="h-full overflow-y-auto">
     <div class="flex justify-end gap-2">
       <a-button @click="$router.push({ name: 'DocumentBin' })">回收箱</a-button>
       <a-button type="primary" @click="showModal = true">新增文档</a-button>
@@ -238,7 +238,7 @@
       v-model:open="editThumbnailModalOpen"
       @selected-picture="handleEditSelectedPicture"
     />
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">

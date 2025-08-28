@@ -1,7 +1,5 @@
 <template>
-  <div class="h-full">
-    <!-- 分类/标签切换 -->
-
+  <a-card class="h-full overflow-y-auto">
     <!-- 表格与操作区域 -->
     <a-page-header class="!px-0">
       <div class="flex justify-between">
@@ -14,6 +12,7 @@
       :columns="columns"
       :data-source="labelList"
       :loading="loading"
+      :pagination="false"
       rowKey="id"
     >
       <template #bodyCell="{ column, record }">
@@ -57,6 +56,21 @@
       </template>
     </a-table>
 
+    <div class="flex justify-end !my-4">
+      <a-pagination
+        v-model:current="pageParam.page_no"
+        :total="totalCount"
+        :page-size="pageParam.page_size"
+        :page-size-options="pageSizeOptions"
+        @change="onPageSizeChange"
+        show-size-changer
+      >
+        <template #buildOptionText="props">
+          <span>{{ props.value }}条/页</span>
+        </template>
+      </a-pagination>
+    </div>
+
     <!-- 新增弹窗 -->
     <a-modal
       v-model:open="createModalOpen"
@@ -78,7 +92,7 @@
         </a-form-item>
       </a-form>
     </a-modal>
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">
@@ -104,19 +118,38 @@ const labelList = ref<LabelVO[]>([]);
 const loading = ref(false);
 const editableMap = reactive<Record<string, LabelVO>>({});
 
+// 分页参数
+const pageParam = reactive({
+  page_no: 1,
+  page_size: 10,
+});
+const pageSizeOptions = ref<string[]>(["10", "20", "30", "40", "50"]);
+const totalCount = ref(1);
+
 const getLabelList = async () => {
   loading.value = true;
-  const res = await queryLabelListAPI({
-    page_no: 1,
-    page_size: 10,
-    label_type: activeKey.value,
-  });
-  labelList.value = res.data.list;
-  loading.value = false;
+  try {
+    const res = await queryLabelListAPI({
+      page_no: pageParam.page_no,
+      page_size: pageParam.page_size,
+      label_type: activeKey.value,
+    });
+    labelList.value = res.data.list;
+    totalCount.value = res.data.total_count;
+  } finally {
+    loading.value = false;
+  }
 };
 
-// 监听 activeKey 切换刷新数据
-watch(activeKey, getLabelList, { immediate: true });
+// 监听 activeKey 切换刷新数据并重置页码
+watch(
+  activeKey,
+  () => {
+    pageParam.page_no = 1;
+    getLabelList();
+  },
+  { immediate: true }
+);
 
 // 新增逻辑
 const createModalOpen = ref(false);
@@ -197,6 +230,12 @@ const onSave = async (record: LabelVO) => {
 const onHandleDelete = async (record: LabelVO) => {
   await deleteLabelAPI(record.id);
   message.success("删除成功");
+  await getLabelList();
+};
+
+// 分页事件
+const onPageSizeChange = async (_page: number, pageSize: number) => {
+  pageParam.page_size = pageSize;
   await getLabelList();
 };
 

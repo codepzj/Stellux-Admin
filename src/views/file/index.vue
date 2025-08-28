@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mx-auto">
+  <a-card class="h-full overflow-y-auto">
     <PhotoWall
       :list="page.list"
       type="display"
@@ -36,7 +36,7 @@
     >
       <p>请确保图片没有被使用</p>
     </a-modal>
-  </div>
+  </a-card>
 </template>
 <script setup lang="ts">
 import PhotoWall from "@/components/PhotoWall/index.vue";
