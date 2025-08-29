@@ -43,12 +43,9 @@
                       <a-menu-item @click="handleSoftDelete(doc.id)"
                         >删除</a-menu-item
                       >
-                      <a-popconfirm
-                        title="确定永久删除该文档吗？此操作不可恢复！"
-                        @confirm="handleDelete(doc.id)"
+                      <a-menu-item danger @click="showDeleteModal(doc.id)"
+                        >永久删除</a-menu-item
                       >
-                        <a-menu-item danger>永久删除</a-menu-item>
-                      </a-popconfirm>
                     </a-menu>
                   </template>
                   <Icon
@@ -238,6 +235,26 @@
       v-model:open="editThumbnailModalOpen"
       @selected-picture="handleEditSelectedPicture"
     />
+
+    <!-- 删除确认弹窗 -->
+    <a-modal
+      v-model:open="deleteModalOpen"
+      title="删除确认"
+      @ok="handleDeleteConfirm"
+      @cancel="deleteModalOpen = false"
+      :ok-button-props="{
+        disabled: !confirmDelete,
+        danger: true,
+      }"
+      centered
+    >
+      <p class="text-red-600 mb-3">此操作将永久删除该文档，无法恢复。</p>
+      <div class="mt-4">
+        <a-checkbox v-model:checked="confirmDelete">
+          我确认删除该文档
+        </a-checkbox>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -265,6 +282,9 @@ const showModal = ref(false);
 const editModalOpen = ref(false);
 const createThumbnailModalOpen = ref(false);
 const editThumbnailModalOpen = ref(false);
+const deleteModalOpen = ref(false);
+const confirmDelete = ref(false);
+const deleteDocId = ref("");
 const loading = ref(false);
 const formRef = ref<FormInstance>();
 const editDoc = ref<DocumentRootEditRequest>({
@@ -344,11 +364,20 @@ const handleEdit = (id: string) => {
   editModalOpen.value = true;
 };
 
-// 删除文档
-const handleDelete = async (id: string) => {
-  await deleteRootDocumentAPI(id);
+// 显示删除确认弹窗
+const showDeleteModal = (id: string) => {
+  deleteDocId.value = id;
+  deleteModalOpen.value = true;
+  confirmDelete.value = false;
+};
+
+// 删除确认
+const handleDeleteConfirm = async () => {
+  await deleteRootDocumentAPI(deleteDocId.value);
   await getAllDoc();
   message.success("文档删除成功");
+  deleteModalOpen.value = false;
+  confirmDelete.value = false;
 };
 
 // 软删除文档

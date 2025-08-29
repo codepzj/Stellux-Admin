@@ -57,6 +57,7 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "/post",
         name: "Post",
+        redirect: { name: "PostList" },
         meta: {
           title: "文章",
           icon: () =>

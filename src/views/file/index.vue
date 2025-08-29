@@ -10,7 +10,12 @@
           type="primary"
           danger
           :disabled="selectedPhotos.length === 0"
-          @click="deleteModalOpen = true"
+          @click="
+            () => {
+              deleteModalOpen = true;
+              confirmDelete = false;
+            }
+          "
         >
           删除
         </a-button>
@@ -29,12 +34,24 @@
     </div>
     <a-modal
       v-model:open="deleteModalOpen"
-      title="确定删除?"
+      title="删除确认"
       @ok="handleDelete"
       @cancel="deleteModalOpen = false"
+      :ok-button-props="{
+        disabled: !confirmDelete,
+        danger: true,
+      }"
       centered
     >
-      <p>请确保图片没有被使用</p>
+      <p class="text-red-600 mb-3">此操作将永久删除选中的图片，无法恢复。</p>
+      <p class="text-gray-600 mb-4">
+        即将删除 {{ selectedPhotos.length }} 张图片
+      </p>
+      <div class="mt-4">
+        <a-checkbox v-model:checked="confirmDelete">
+          我确认删除选中的图片
+        </a-checkbox>
+      </div>
     </a-modal>
   </a-card>
 </template>
@@ -49,6 +66,7 @@ import { API_BASE_URL } from "@/constant";
 
 // 删除弹窗
 const deleteModalOpen = ref(false);
+const confirmDelete = ref(false);
 const page = reactive<PageData<FileVO>>({
   page_no: 1,
   page_size: 24,
@@ -96,6 +114,7 @@ const handleDelete = async () => {
   message.success("删除成功");
   await getList();
   deleteModalOpen.value = false;
+  confirmDelete.value = false;
 };
 </script>
 <style scoped lang="scss"></style>

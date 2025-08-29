@@ -60,7 +60,7 @@
                           @click="openCreateModal('file', key, document_id)"
                           >新增文档</a-menu-item
                         >
-                        <a-menu-item key="4" @click="deleteDocumentParent(key)"
+                        <a-menu-item key="4" @click="showDeleteParentModal(key)"
                           >删除目录</a-menu-item
                         >
                       </a-menu>
@@ -68,7 +68,7 @@
                         <a-menu-item key="1" @click="handleEditModalOpen(key)"
                           >编辑文档</a-menu-item
                         >
-                        <a-menu-item key="2" @click="deleteDocumentLeaf(key)"
+                        <a-menu-item key="2" @click="showDeleteLeafModal(key)"
                           >删除文档</a-menu-item
                         >
                       </a-menu>
@@ -211,6 +211,48 @@
       @update:visible="editModal.visible = $event"
       @success="handleEditSuccess"
     />
+
+    <!-- 删除文档确认弹窗 -->
+    <a-modal
+      v-model:open="deleteLeafModalOpen"
+      title="删除确认"
+      @ok="handleDeleteLeafConfirm"
+      @cancel="deleteLeafModalOpen = false"
+      :ok-button-props="{
+        disabled: !confirmDeleteLeaf,
+        danger: true,
+      }"
+      centered
+    >
+      <p class="text-red-600 mb-3">此操作将永久删除该文档，无法恢复。</p>
+      <div class="mt-4">
+        <a-checkbox v-model:checked="confirmDeleteLeaf">
+          我确认删除该文档
+        </a-checkbox>
+      </div>
+    </a-modal>
+
+    <!-- 删除目录确认弹窗 -->
+    <a-modal
+      v-model:open="deleteParentModalOpen"
+      title="删除确认"
+      @ok="handleDeleteParentConfirm"
+      @cancel="deleteParentModalOpen = false"
+      :ok-button-props="{
+        disabled: !confirmDeleteParent,
+        danger: true,
+      }"
+      centered
+    >
+      <p class="text-red-600 mb-3">
+        此操作将永久删除该目录及其所有子内容，无法恢复。
+      </p>
+      <div class="mt-4">
+        <a-checkbox v-model:checked="confirmDeleteParent">
+          我确认删除该目录及所有子内容
+        </a-checkbox>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -278,6 +320,14 @@ const createFileOrFolderModal = reactive({
 
 const createFormRef = ref();
 const createFileOrFolderFormRef = ref();
+
+// 删除确认相关
+const deleteLeafModalOpen = ref(false);
+const deleteParentModalOpen = ref(false);
+const confirmDeleteLeaf = ref(false);
+const confirmDeleteParent = ref(false);
+const deleteLeafId = ref("");
+const deleteParentId = ref("");
 
 // 编辑文档信息
 const editModal = reactive({
@@ -430,15 +480,40 @@ const getParentDoc = async () => {
   ];
 };
 
-const deleteDocumentLeaf = async (id: string) => {
-  await deleteDocumentContentAPI(id);
-  await getDocumentTree(route.params.id as string);
+// 显示删除文档确认弹窗
+const showDeleteLeafModal = (id: string) => {
+  deleteLeafId.value = id;
+  deleteLeafModalOpen.value = true;
+  confirmDeleteLeaf.value = false;
 };
 
-const deleteDocumentParent = async (id: string) => {
-  const childIds = getAllChildIdByParentId(treeData.value, id);
+// 显示删除目录确认弹窗
+const showDeleteParentModal = (id: string) => {
+  deleteParentId.value = id;
+  deleteParentModalOpen.value = true;
+  confirmDeleteParent.value = false;
+};
+
+// 删除文档确认
+const handleDeleteLeafConfirm = async () => {
+  await deleteDocumentContentAPI(deleteLeafId.value);
+  await getDocumentTree(route.params.id as string);
+  deleteLeafModalOpen.value = false;
+  confirmDeleteLeaf.value = false;
+  message.success("文档删除成功");
+};
+
+// 删除目录确认
+const handleDeleteParentConfirm = async () => {
+  const childIds = getAllChildIdByParentId(
+    treeData.value,
+    deleteParentId.value
+  );
   await deleteDocumentByIdListAPI(childIds);
   await getDocumentTree(route.params.id as string);
+  deleteParentModalOpen.value = false;
+  confirmDeleteParent.value = false;
+  message.success("目录删除成功");
 };
 
 const handleEditModalOpen = async (id: string) => {
