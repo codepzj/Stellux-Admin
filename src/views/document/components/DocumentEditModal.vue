@@ -27,7 +27,12 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="别名" name="alias">
+          <!-- 非目录才有别名 -->
+          <a-form-item
+            v-if="!documentContent?.is_dir"
+            label="别名"
+            name="alias"
+          >
             <a-input
               v-model:value="formData.alias"
               placeholder="请输入别名"

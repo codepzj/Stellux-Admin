@@ -143,9 +143,9 @@ export const getDocumentTreeDataAPI = (
 
 // 批量删除文档
 export const deleteDocumentByIdListAPI = (
-  document_id_list: string[]
+  id_list: string[]
 ): Promise<Response<any>> => {
   return request.post(`/admin-api/document-content/delete-list`, {
-    document_id_list,
+    id_list,
   });
 };

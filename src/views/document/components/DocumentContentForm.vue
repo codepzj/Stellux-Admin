@@ -18,7 +18,7 @@
         </a-form-item>
       </a-col>
       <a-col :span="12">
-        <a-form-item label="别名" name="alias">
+        <a-form-item v-if="!formData.is_dir" label="别名" name="alias">
           <a-input
             v-model:value="formData.alias"
             placeholder="请输入别名"
@@ -109,13 +109,23 @@ const formData = reactive<DocumentContentRequest & { id?: string }>({
   sort: 1,
 });
 
+const checkAlias = (_rule: any, value: string) => {
+  if (formData.is_dir) {
+    return Promise.resolve();
+  }
+  if (!value) {
+    return Promise.reject(new Error("别名不能为空"));
+  }
+  return Promise.resolve();
+};
+
 const rules = {
   title: [
     { required: true, message: "请输入标题", trigger: "blur" },
     { min: 1, max: 20, message: "标题长度在1-20个字符", trigger: "blur" },
   ],
   alias: [
-    { required: true, message: "请输入别名", trigger: "blur" },
+    { validator: checkAlias, message: "请输入别名", trigger: "blur" },
     { min: 1, max: 20, message: "别名长度在1-20个字符", trigger: "blur" },
   ],
   description: [

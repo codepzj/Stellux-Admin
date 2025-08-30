@@ -1,9 +1,11 @@
 <template>
   <a-card class="h-full overflow-y-auto">
-    <a-page-header class="!px-0">
-      <div class="flex justify-between">
-        <a-segmented v-model:value="activeKey" :options="data" />
-      </div>
+    <a-page-header
+      :title="$route.meta.title"
+      class="!px-0"
+      @back="() => $router.back()"
+      :backIcon="false"
+    >
     </a-page-header>
     <a-table :data-source="docList" :loading="loading" :columns="columns">
       <template #bodyCell="{ column, record }">
@@ -67,7 +69,6 @@ import dayjs from "dayjs";
 import ImgFallback from "@/assets/png/img-fallback.png";
 import { message } from "ant-design-vue";
 
-const activeKey = ref("1");
 const loading = ref(false);
 const docList = ref<DocumentRootVO[]>([]);
 const deleteModalOpen = ref(false);
@@ -132,17 +133,6 @@ const columns = ref([
   {
     title: "操作",
     dataIndex: "action",
-  },
-]);
-
-const data = ref([
-  {
-    label: "文档",
-    value: "1",
-  },
-  {
-    label: "文件",
-    value: "2",
   },
 ]);
 
