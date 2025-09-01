@@ -38,34 +38,17 @@
           >
             保存
           </a-button>
-          <a-button size="small" @click="handleEdit">
-            {{ isEditing ? "预览" : "编辑" }}
-          </a-button>
-          <a-tag v-if="isEditing" color="blue" size="small">编辑模式</a-tag>
-          <a-tag v-else color="green" size="small">预览模式</a-tag>
         </div>
       </div>
     </div>
 
     <!-- 文档内容编辑区域 -->
-    <div v-if="isEditing" class="h-full flex flex-col" style="min-height: 0">
+    <div class="h-full flex flex-col" style="min-height: 0">
       <MdWriter
         v-model:content="editingContent"
         mode="auto"
         style="height: 100%; min-height: 600px"
       />
-    </div>
-    <div v-else class="h-full overflow-auto p-4">
-      <div v-if="editingContent" class="prose max-w-none">
-        <MdViewer :content="editingContent" />
-      </div>
-      <div
-        v-else
-        class="h-full flex flex-col items-center justify-center text-center text-gray-500 py-8"
-      >
-        <Icon icon="ant-design:file-text-outlined" class="text-2xl mb-2" />
-        <p>暂无内容</p>
-      </div>
     </div>
   </div>
 </template>
@@ -73,9 +56,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { message } from "ant-design-vue";
-import { Icon } from "@iconify/vue";
 import MdWriter from "@/components/MdWriter/index.vue";
-import MdViewer from "@/components/MdViewer/index.vue";
 import type { DocumentContentVO } from "@/types/document";
 import { updateDocumentContentAPI } from "@/api/document";
 
@@ -87,7 +68,6 @@ const emit = defineEmits<{
   (e: "update", content: DocumentContentVO): void;
 }>();
 
-const isEditing = ref(true); // 默认进入编辑模式
 const saving = ref(false);
 const editingContent = ref("");
 
@@ -106,15 +86,6 @@ watch(
 const formatDate = (dateString?: string) => {
   if (!dateString) return "-";
   return new Date(dateString).toLocaleString("zh-CN");
-};
-
-// 切换编辑模式
-const handleEdit = () => {
-  isEditing.value = !isEditing.value;
-  if (isEditing.value) {
-    editingContent.value =
-      editingContent.value || props.documentContent?.content || "";
-  }
 };
 
 // 保存文档内容
@@ -147,7 +118,6 @@ const handleSave = async () => {
 
     emit("update", updatedContent);
     message.success("保存成功");
-    isEditing.value = false;
   } catch (error) {
     message.error("保存失败");
   } finally {
