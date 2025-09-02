@@ -134,8 +134,13 @@ export const routes: RouteRecordRaw[] = [
         path: "/friend",
         name: "Friend",
         meta: {
-          title: "好友",
-          icon: () => h(Icon, { icon: "uil:user", width: 18, height: 18 }),
+          title: "友链",
+          icon: () =>
+            h(Icon, {
+              icon: "icon-park-outline:friends-circle",
+              width: 18,
+              height: 18,
+            }),
         },
         component: () => import("@/views/friend/index.vue"),
       },

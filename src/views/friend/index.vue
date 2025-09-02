@@ -53,15 +53,13 @@
               >编辑</a-button
             >
             <a-divider type="vertical" />
-            <a-popconfirm
-              placement="bottomRight"
-              title="确定删除该友链吗？"
-              ok-text="确定"
-              cancel-text="取消"
-              @confirm="handleDelete(record.id)"
+            <a-button
+              size="small"
+              type="link"
+              danger
+              @click="showDeleteModal(record.id)"
+              >删除</a-button
             >
-              <a-button size="small" type="link" danger>删除</a-button>
-            </a-popconfirm>
           </span>
         </template>
       </template>
@@ -120,6 +118,23 @@
           <a-switch v-model:checked="editForm.is_active" />
         </a-form-item>
       </a-form>
+    </a-modal>
+
+    <!-- 删除确认弹窗 -->
+    <a-modal
+      v-model:open="deleteModalOpen"
+      title="删除确认"
+      @ok="handleDeleteConfirm"
+      @cancel="deleteModalOpen = false"
+      :ok-button-props="{ disabled: !confirmDelete, danger: true }"
+      centered
+    >
+      <p class="text-red-600 mb-3">此操作将永久删除该友链，无法恢复。</p>
+      <div class="mt-4">
+        <a-checkbox v-model:checked="confirmDelete"
+          >我确认删除该友链</a-checkbox
+        >
+      </div>
     </a-modal>
   </div>
 </template>
@@ -254,10 +269,23 @@ const handleEditOk = async () => {
   await getFriendList();
 };
 
-const handleDelete = async (id: string) => {
-  const res = await deleteFriendAPI(id);
+// 删除逻辑（危险弹窗）
+const deleteModalOpen = ref(false);
+const confirmDelete = ref(false);
+const deleteId = ref("");
+
+const showDeleteModal = (id: string) => {
+  deleteId.value = id;
+  confirmDelete.value = false;
+  deleteModalOpen.value = true;
+};
+
+const handleDeleteConfirm = async () => {
+  const res = await deleteFriendAPI(deleteId.value);
   message.success(res.msg);
   await getFriendList();
+  deleteModalOpen.value = false;
+  confirmDelete.value = false;
 };
 // 表格列定义
 const columns = [
