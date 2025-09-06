@@ -10,7 +10,9 @@
           :maxlength="50"
         />
       </div>
-      <a-button type="primary" @click="open = true"> 发布文章 </a-button>
+      <a-button type="primary" @click="open = true">
+        {{ props.mode === "create" ? "发布文章" : "编辑文章" }}
+      </a-button>
     </div>
     <div class="h-full">
       <MdWriter v-model:content="postForm.content" />
