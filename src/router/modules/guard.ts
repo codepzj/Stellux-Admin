@@ -15,7 +15,6 @@ const createRouterGuard = (router: Router) => {
     if (!isAuthenticated && !isLoginPage) {
       next({ name: "Login" });
     } else if (isAuthenticated && isLoginPage) {
-      // 如果已登录还访问 login 页面，可选择跳转到首页或允许访问
       next({ name: "Dashboard" });
     } else {
       next();

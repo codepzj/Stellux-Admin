@@ -1,12 +1,12 @@
 export interface Response<T> {
   code: number;
-  msg: string;
   data: T;
+  msg?: string;
+  error?: string;
 }
 
 export interface PageResponse<T> {
   code: number;
-  msg: string;
   data: {
     page_no: number;
     page_size: number;
@@ -14,6 +14,8 @@ export interface PageResponse<T> {
     total_page: number;
     list: T[];
   };
+  msg?: string;
+  error?: string;
 }
 
 export interface PageReq {

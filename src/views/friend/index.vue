@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <a-card class="h-full">
     <!-- 表格与操作区域 -->
     <a-page-header class="!px-0">
       <div class="flex justify-between">
@@ -136,7 +136,7 @@
         >
       </div>
     </a-modal>
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">

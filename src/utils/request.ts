@@ -25,8 +25,18 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   async response => {
-    if (response.data.code !== 0) {
-      const errMessage = response.data.msg || "操作失败";
+    const { code, error } = response.data;
+    // 业务逻辑错误（后端统一返回 HTTP 200，code 200 表示成功）
+    if (code !== 200) {
+      // 401: 认证失败
+      if (code === 401) {
+        clearStore();
+        message.error("登录已过期, 请重新登录");
+        router.replace({ name: "Login" });
+        return Promise.reject(new Error("登录已过期"));
+      }
+
+      const errMessage = error || "操作失败";
       message.error(errMessage);
       return Promise.reject(new Error(errMessage));
     }
@@ -35,14 +45,9 @@ request.interceptors.response.use(
   },
   error => {
     if (!error.response) {
-      message.error("网络错误，请稍后重试");
-    } else if (error.response.data.code === 401) {
-      clearStore();
-      message.error("登录已过期，请重新登录");
-      router.replace({ name: "Login" });
-      return Promise.reject(new Error("登录已过期"));
+      message.error("网络错误, 请稍后重试");
     } else {
-      message.error(error.response.data.msg || "操作失败");
+      message.error(error.response.data?.error || "操作失败");
     }
     return Promise.reject(error);
   }

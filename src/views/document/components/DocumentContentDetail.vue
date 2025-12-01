@@ -1,7 +1,7 @@
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full flex flex-col p-2">
     <!-- 文档信息头部 -->
-    <div class="flex-shrink-0 border-b border-gray-200">
+    <div class="flex-shrink-0">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900">
           {{ documentContent?.title || "文档详情" }}

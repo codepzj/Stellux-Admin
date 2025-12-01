@@ -1,26 +1,23 @@
 <template>
-  <MdEditor
-    v-model="content"
-    :previewTheme="editorState.previewTheme"
-    :codeTheme="editorState.codeTheme"
-    :theme="theme"
-    :showCodeRowNumber="editorState.showCodeRowNumber"
-    :autoFoldThreshold="editorState.autoFoldThreshold"
-    :toolbars="toolbars"
-    class="!h-full"
-  >
-    <template #defToolbars>
-      <MdPhoto @selected-picture="selectedPicture" />
-    </template>
-  </MdEditor>
+  <div class="md-writer-container">
+    <v-md-editor
+      ref="editorRef"
+      :toc-nav-position-right="true"
+      v-model="content"
+      height="100%"
+      left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link customImage code"
+      :toolbar="toolbar"
+    />
+    <PhotoSelect
+      v-model:open="photoSelectOpen"
+      @selected-picture="handleSelectedPicture"
+    />
+  </div>
 </template>
 
-<script setup>
-import { MdEditor } from "md-editor-v3";
-import "md-editor-v3/lib/style.css";
+<script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { useSystemStore } from "@/store";
-import MdPhoto from "./plugins/md-photo.vue";
+import PhotoSelect from "@/components/PhotoSelect/index.vue";
 
 const props = defineProps({
   content: {
@@ -28,69 +25,44 @@ const props = defineProps({
     default: "",
   },
 });
-const content = useVModel(props, "content");
-const systemStore = useSystemStore();
-const editorState = ref({
-  previewTheme: "github",
-  codeTheme: "github",
-  showCodeRowNumber: false,
-  autoFoldThreshold: 100,
-});
 
-const theme = computed(() => systemStore.themeMode);
-const toolbars = [
-  "bold",
-  "underline",
-  "italic",
-  "-",
-  "title",
-  "strikeThrough",
-  "sub",
-  "sup",
-  "quote",
-  "unorderedList",
-  "orderedList",
-  "task",
-  "-",
-  "codeRow",
-  "code",
-  "link",
-  "table",
-  "mermaid",
-  "katex",
-  "-",
-  0,
-  "=",
-  "pageFullscreen",
-  "fullscreen",
-  "preview",
-  "previewOnly",
-  "catalog",
-];
-
-const selectedPicture = picture => {
-  // 如果图片为空，则不添加
-  if (!picture) return;
-  content.value = content.value + `![图片](${picture})`;
-};
 const emit = defineEmits(["update:content"]);
+const content = useVModel(props, "content", emit);
 
-watch(
-  () => props.content,
-  newVal => {
-    editorState.value.content = newVal;
-  }
-);
+const editorRef = ref<any>(null);
+const photoSelectOpen = ref(false);
 
-watch(
-  () => editorState.value.content,
-  newVal => {
-    emit("update:content", newVal);
-  }
-);
+const toolbar = {
+  customImage: {
+    title: "插入图片",
+    icon: "v-md-icon-img",
+    action() {
+      photoSelectOpen.value = true;
+    },
+  },
+};
+
+const handleSelectedPicture = (picture: string) => {
+  if (!picture) return;
+  editorRef.value?.insert((selected: string) => {
+    return {
+      text: `![${selected || "图片"}](${picture})`,
+      selected: selected || "图片",
+    };
+  });
+};
 </script>
-<style scoped>
-:deep(.md-editor-preview .md-editor-code .md-editor-code-head) {
-  z-index: 0 !important;
+
+<style scoped lang="scss">
+.md-writer-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+
+  :deep(.v-md-editor) {
+    box-shadow: 1px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    flex: 1;
+  }
 }
 </style>

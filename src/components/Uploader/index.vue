@@ -12,7 +12,7 @@
     @cancel="handleCancel"
   >
     <div class="flex flex-col items-center mt-10">
-      <div id="uppy-dashboard" class="w-4/5"></div>
+      <div id="uppy-dashboard" class="mx-auto w-4/5"></div>
     </div>
   </a-modal>
 </template>
@@ -26,9 +26,9 @@ import Compressor from "@uppy/compressor";
 import XHR from "@uppy/xhr-upload";
 import ZhHans from "@uppy/locales/lib/zh_CN";
 
-import "@uppy/core/dist/style.min.css";
-import "@uppy/dashboard/dist/style.min.css";
-import "@uppy/image-editor/dist/style.min.css";
+import "@uppy/core/css/style.min.css";
+import "@uppy/dashboard/css/style.min.css";
+import "@uppy/image-editor/css/style.min.css";
 
 const open = ref<boolean>(false);
 const userStore = useUserStore();
