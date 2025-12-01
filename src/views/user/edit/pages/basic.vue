@@ -112,7 +112,7 @@ const getThumbnailList = async () => {
 };
 
 const handleSelectAvatar = (pictures: string[]) => {
-  form.value.avatar = pictures[0];
+  form.value.avatar = pictures[0] ?? "";
 };
 
 const form = ref({

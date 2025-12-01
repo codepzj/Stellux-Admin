@@ -19,4 +19,5 @@ export interface LabelPageReq {
   page_no: number;
   page_size: number;
   label_type: string;
+  keyword?: string;
 }

@@ -20,7 +20,7 @@
           <div>
             <a-input
               v-if="editableMap[record.id]"
-              v-model:value="editableMap[record.id].name"
+              v-model:value="editableMap[record.id]!.name"
               style="width: 200px"
             />
             <template v-else>

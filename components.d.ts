@@ -11,8 +11,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AAnchor: typeof import('ant-design-vue/es')['Anchor']
-    AAnchorLink: typeof import('ant-design-vue/es')['AnchorLink']
     AAvatar: typeof import('ant-design-vue/es')['Avatar']
     ABreadcrumb: typeof import('ant-design-vue/es')['Breadcrumb']
     ABreadcrumbItem: typeof import('ant-design-vue/es')['BreadcrumbItem']
@@ -68,14 +66,11 @@ declare module 'vue' {
     ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect']
     ATypographyLink: typeof import('ant-design-vue/es')['TypographyLink']
     ATypographyParagraph: typeof import('ant-design-vue/es')['TypographyParagraph']
-    AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     Breadcrumb: typeof import('./src/components/Header/components/breadcrumb/index.vue')['default']
     Document: typeof import('./src/components/Header/document.vue')['default']
     Footer: typeof import('./src/components/Footer/index.vue')['default']
     FullScreen: typeof import('./src/components/Header/components/fullScreen/index.vue')['default']
     Header: typeof import('./src/components/Header/index.vue')['default']
-    MdPhoto: typeof import('./src/components/MdWriter/plugins/md-photo.vue')['default']
-    MdViewer: typeof import('./src/components/MdViewer/index.vue')['default']
     MdWriter: typeof import('./src/components/MdWriter/index.vue')['default']
     Photo: typeof import('./src/components/Input/photo.vue')['default']
     PhotoSelect: typeof import('./src/components/PhotoSelect/index.vue')['default']

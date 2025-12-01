@@ -8,7 +8,7 @@ export function parseMarkdownToAnchorItems(md: string) {
     const h2Match = line.match(/^##\s+(.+)/);
     const h3Match = line.match(/^###\s+(.+)/);
 
-    if (h2Match) {
+    if (h2Match && h2Match[1]) {
       const title = h2Match[1].trim();
       current = {
         key: String(key++),
@@ -16,7 +16,7 @@ export function parseMarkdownToAnchorItems(md: string) {
         title,
       };
       result.push(current);
-    } else if (h3Match) {
+    } else if (h3Match && h3Match[1]) {
       const title = h3Match[1].trim();
       const child = {
         key: String(key++),

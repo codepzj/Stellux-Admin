@@ -79,7 +79,7 @@ function search() {
     );
   });
   if (resultOptions.value?.length > 0) {
-    activePath.value = resultOptions.value[0].name as string;
+    activePath.value = resultOptions.value[0]?.name as string;
   } else {
     activePath.value = "";
   }
@@ -120,9 +120,9 @@ function handleUp() {
     item => item.name === activePath.value
   );
   if (index === 0) {
-    activePath.value = resultOptions.value[length - 1].name as string;
+    activePath.value = resultOptions.value[length - 1]?.name as string;
   } else {
-    activePath.value = resultOptions.value[index - 1].name as string;
+    activePath.value = resultOptions.value[index - 1]?.name as string;
   }
 }
 
@@ -134,9 +134,9 @@ function handleDown() {
     item => item.name === activePath.value
   );
   if (index + 1 === length) {
-    activePath.value = resultOptions.value[0].name as string;
+    activePath.value = resultOptions.value[0]?.name as string;
   } else {
-    activePath.value = resultOptions.value[index + 1].name as string;
+    activePath.value = resultOptions.value[index + 1]?.name as string;
   }
 }
 

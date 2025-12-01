@@ -120,7 +120,7 @@
 
               <!-- 目录节点提示 -->
               <div
-                v-else-if="selectedKeys.length > 0 && isDir(selectedKeys[0])"
+                v-else-if="selectedKeys.length > 0 && isDir(selectedKeys[0]!)"
                 class="flex items-center justify-center h-full text-gray-500"
               >
                 <div class="text-center">
@@ -136,7 +136,7 @@
               <div
                 v-else-if="
                   selectedKeys.length > 0 &&
-                  isFile(selectedKeys[0]) &&
+                  isFile(selectedKeys[0]!) &&
                   documentDetail
                 "
                 class="h-full pr-2.5"
@@ -152,7 +152,7 @@
               <div
                 v-else-if="
                   selectedKeys.length > 0 &&
-                  isFile(selectedKeys[0]) &&
+                  isFile(selectedKeys[0]!) &&
                   !documentDetail
                 "
                 class="flex items-center justify-center h-full"
@@ -537,7 +537,7 @@ const handleEditSuccess = async (updatedContent: DocumentContentVO) => {
       ...docTreeData.value[index],
       title: updatedContent.title,
       sort: updatedContent.sort,
-    };
+    } as DocumentContentVO;
   }
 
   // 如果当前选中的是编辑的文档，也更新详情

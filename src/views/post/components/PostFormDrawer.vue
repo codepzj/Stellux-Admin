@@ -63,7 +63,12 @@
                 mode="multiple"
                 v-model:value="postForm.tags_id"
                 :max-tag-count="2"
-                placeholder="请选择标签"
+                placeholder="请选择或搜索标签"
+                :loading="tagsLoading"
+                show-search
+                :filter-option="false"
+                @search="handleTagsSearch"
+                @popup-scroll="handleTagsPopupScroll"
               >
                 <template #maxTagPlaceholder="omittedValues">
                   <span style="color: red"
@@ -72,6 +77,15 @@
                 </template>
                 <a-select-option v-for="t in tags" :key="t.id" :value="t.id">
                   {{ t.name }}
+                </a-select-option>
+                <a-select-option v-if="tagsLoading" disabled key="loading">
+                  <a-spin size="small" /> 加载中...
+                </a-select-option>
+                <a-select-option v-else-if="tagsHasMore" disabled key="more">
+                  <span class="text-gray-400">滚动加载更多</span>
+                </a-select-option>
+                <a-select-option v-else disabled key="end">
+                  <span class="text-gray-400">已加载全部</span>
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -103,7 +117,7 @@
             </div>
             <div
               v-else
-              class="w-[192px] h-[108px] flex items-center justify-center border-1 border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
+              class="w-[192px] h-[108px] flex items-center justify-center border border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
               @click="thumbnailModalOpen = true"
             >
               <span class="text-sm">选择图片</span>
@@ -172,11 +186,11 @@
 import { useRouter } from "vue-router";
 import { message, type FormInstance } from "ant-design-vue";
 
-import { useVModel, useWindowSize } from "@vueuse/core";
+import { useVModel, useWindowSize, useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 
 import PhotoSelect from "@/components/PhotoSelect/index.vue";
-import { queryAllByTypeAPI } from "@/api/label";
+import { queryAllByTypeAPI, queryLabelListAPI } from "@/api/label";
 import { createPostAPI, updatePostAPI } from "@/api/post";
 
 import type { PostReq } from "@/types/post";
@@ -227,15 +241,54 @@ const rules = {
 // 分类 / 标签
 const categories = ref<LabelVO[]>([]);
 const tags = ref<LabelVO[]>([]);
+const tagsLoading = ref(false);
+const tagsHasMore = ref(true);
+const tagsPage = ref(1);
+const tagsPageSize = 20;
+const tagsKeyword = ref("");
 
 // 获取数据
 const fetchCategories = async () => {
   const res = await queryAllByTypeAPI("category");
   categories.value = res.data;
 };
-const fetchTags = async () => {
-  const res = await queryAllByTypeAPI("tag");
-  tags.value = res.data;
+const fetchTags = async (reset = false) => {
+  if (tagsLoading.value) return;
+  if (!reset && !tagsHasMore.value) return;
+
+  if (reset) {
+    tagsPage.value = 1;
+    tagsHasMore.value = true;
+    tags.value = [];
+  }
+
+  tagsLoading.value = true;
+  try {
+    const res = await queryLabelListAPI({
+      page_no: tagsPage.value,
+      page_size: tagsPageSize,
+      label_type: "tag",
+      keyword: tagsKeyword.value || undefined,
+    });
+    const newTags = res.data.list || [];
+    tags.value = reset ? newTags : [...tags.value, ...newTags];
+    tagsHasMore.value = newTags.length === tagsPageSize;
+    tagsPage.value++;
+  } finally {
+    tagsLoading.value = false;
+  }
+};
+
+const handleTagsSearch = useDebounceFn((value: string) => {
+  tagsKeyword.value = value;
+  fetchTags(true);
+}, 300);
+
+const handleTagsPopupScroll = (e: Event) => {
+  const target = e.target as HTMLElement;
+  if (target.scrollTop + target.offsetHeight >= target.scrollHeight - 10) {
+    fetchTags();
+  }
 };
 
 // 自动生成描述
@@ -294,12 +347,12 @@ const { width } = useWindowSize();
 // 初始化
 onMounted(() => {
   fetchCategories();
-  fetchTags();
+  fetchTags(true);
 });
 
 onActivated(() => {
   fetchCategories();
-  fetchTags();
+  fetchTags(true);
 });
 </script>
 

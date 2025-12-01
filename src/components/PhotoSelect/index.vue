@@ -92,7 +92,7 @@ const selectedPicture = ref("");
  * @param pictures - 用户选择的图片 URL 数组
  */
 const handleSelectPicture = (pictures: string[]) => {
-  selectedPicture.value = pictures[0];
+  selectedPicture.value = pictures[0] ?? "";
 };
 
 const confirmSelectedPicture = () => {

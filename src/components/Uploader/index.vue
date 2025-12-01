@@ -61,7 +61,7 @@ const initUppy = () => {
     .use(Dashboard, {
       inline: true,
       target: "#uppy-dashboard",
-      showProgressDetails: true,
+      hideProgressDetails: false,
       width: "100%",
     })
     .use(ImageEditor, {
