@@ -154,6 +154,20 @@ export const routes: RouteRecordRaw[] = [
         },
         component: () => import("@/views/file/index.vue"),
       },
+      {
+        path: "/config",
+        name: "Config",
+        meta: {
+          title: "设置",
+          icon: () =>
+            h(Icon, {
+              icon: "icon-park-outline:setting",
+              width: 18,
+              height: 18,
+            }),
+        },
+        component: () => import("@/views/page/index.vue"),
+      },
     ],
   },
   {

@@ -93,35 +93,25 @@
         </a-row>
 
         <a-form-item label="封面" name="thumbnail">
-          <div class="flex flex-row gap-2 items-end">
-            <div
-              v-if="postForm.thumbnail"
-              class="w-[192px] h-[108px] flex justify-center relative group"
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-600 whitespace-nowrap"
+              >图片链接：</span
             >
-              <img
-                :src="postForm.thumbnail"
-                class="rounded-md cursor-pointer object-fill w-[192px] h-[108px]"
-                @click="thumbnailModalOpen = true"
-              />
-              <div
-                class="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-              >
-                <Icon
-                  icon="solar:close-circle-bold-duotone"
-                  width="24"
-                  height="24"
-                  color="red"
-                  @click.stop="postForm.thumbnail = ''"
-                />
-              </div>
-            </div>
-            <div
-              v-else
-              class="w-[192px] h-[108px] flex items-center justify-center border border-dashed border-gray-300 rounded-md cursor-pointer text-zinc-400"
+            <a-input
+              v-model:value="postForm.thumbnail"
+              placeholder="输入图片链接或从相册选择"
+              style="flex: 1"
+            />
+            <a-button
+              type="link"
+              size="small"
               @click="thumbnailModalOpen = true"
             >
-              <span class="text-sm">选择图片</span>
-            </div>
+              <template #icon>
+                <Icon icon="solar:gallery-bold-duotone" />
+              </template>
+              从相册选择
+            </a-button>
           </div>
         </a-form-item>
 
