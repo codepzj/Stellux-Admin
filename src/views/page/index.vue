@@ -1,6 +1,6 @@
 <template>
   <a-card class="h-full">
-    <a-page-header title="网站设置" class="!px-0">
+    <a-page-header title="网站设置" class="px-0!">
       <template #extra>
         <a-button type="primary" @click="handleCreate">
           <template #icon>

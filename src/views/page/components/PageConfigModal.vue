@@ -263,6 +263,20 @@
             </a-row>
           </div>
         </a-form-item>
+
+        <a-form-item
+          label="座右铭"
+          name="motto"
+          :rules="[{ max: 200, message: '座右铭不能超过200个字符' }]"
+        >
+          <a-textarea
+            v-model:value="formData.content.motto"
+            placeholder="请输入座右铭（显示在页面底部）"
+            :rows="3"
+            show-count
+            :maxlength="200"
+          />
+        </a-form-item>
       </template>
 
       <!-- About页面配置 -->
@@ -419,10 +433,7 @@
             <a-form-item
               label="SEO标题"
               name="seo_title"
-              :rules="[
-                { required: true, message: '请输入SEO标题' },
-                { max: 60, message: 'SEO标题不能超过60个字符' },
-              ]"
+              :rules="[{ max: 60, message: 'SEO标题不能超过60个字符' }]"
             >
               <a-input
                 v-model:value="formData.content.seo_title"
@@ -433,7 +444,19 @@
         </a-row>
 
         <a-row :gutter="16">
-          <a-col :span="12">
+          <a-col :span="8">
+            <a-form-item
+              label="SEO作者"
+              name="seo_author"
+              :rules="[{ max: 50, message: 'SEO作者不能超过50个字符' }]"
+            >
+              <a-input
+                v-model:value="formData.content.seo_author"
+                placeholder="请输入SEO作者"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
             <a-form-item label="SEO关键词" name="seo_keywords">
               <a-select
                 v-model:value="formData.content.seo_keywords"
@@ -443,7 +466,7 @@
               />
             </a-form-item>
           </a-col>
-          <a-col :span="12">
+          <a-col :span="8">
             <a-form-item
               label="Canonical URL"
               name="canonical_url"
@@ -462,10 +485,7 @@
             <a-form-item
               label="SEO描述"
               name="seo_description"
-              :rules="[
-                { required: true, message: '请输入SEO描述' },
-                { max: 160, message: 'SEO描述不能超过160个字符' },
-              ]"
+              :rules="[{ max: 160, message: 'SEO描述不能超过160个字符' }]"
             >
               <a-textarea
                 v-model:value="formData.content.seo_description"
@@ -667,6 +687,9 @@ const rules = {
           if (value.quote && value.quote.trim().length > 100) {
             return Promise.reject("名言不能超过100个字符");
           }
+          if (value.motto && value.motto.trim().length > 200) {
+            return Promise.reject("座右铭不能超过200个字符");
+          }
 
           // URL格式验证
           if (value.avatar && !isValidUrl(value.avatar)) {
@@ -782,11 +805,8 @@ const rules = {
           }
         } else if (configType === "seo") {
           // SEO配置验证
-          if (!value.seo_title || value.seo_title.trim() === "") {
-            return Promise.reject("请输入SEO标题");
-          }
-          if (!value.seo_description || value.seo_description.trim() === "") {
-            return Promise.reject("请输入SEO描述");
+          if (value.seo_author && value.seo_author.length > 50) {
+            return Promise.reject("SEO作者不能超过50个字符");
           }
 
           // 长度验证
