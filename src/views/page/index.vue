@@ -80,6 +80,7 @@
       v-model:open="modalVisible"
       :config="currentConfig"
       :loading="modalLoading"
+      :existing-configs="pageConfigs"
       @ok="handleModalOk"
       @cancel="handleModalCancel"
     />

@@ -18,9 +18,39 @@
               placeholder="请选择设置类型"
               :disabled="isEdit"
             >
-              <a-select-option value="home">主页设置</a-select-option>
-              <a-select-option value="about">关于页设置</a-select-option>
-              <a-select-option value="seo">SEO设置</a-select-option>
+              <a-select-option
+                value="home"
+                :disabled="!isEdit && existingConfigTypes.includes('home')"
+              >
+                主页设置
+                <span
+                  v-if="!isEdit && existingConfigTypes.includes('home')"
+                  class="text-gray-400 ml-2"
+                  >(已创建)</span
+                >
+              </a-select-option>
+              <a-select-option
+                value="about"
+                :disabled="!isEdit && existingConfigTypes.includes('about')"
+              >
+                关于页设置
+                <span
+                  v-if="!isEdit && existingConfigTypes.includes('about')"
+                  class="text-gray-400 ml-2"
+                  >(已创建)</span
+                >
+              </a-select-option>
+              <a-select-option
+                value="seo"
+                :disabled="!isEdit && existingConfigTypes.includes('seo')"
+              >
+                SEO设置
+                <span
+                  v-if="!isEdit && existingConfigTypes.includes('seo')"
+                  class="text-gray-400 ml-2"
+                  >(已创建)</span
+                >
+              </a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -30,7 +60,11 @@
       <a-divider>通用配置</a-divider>
       <a-row :gutter="16">
         <a-col :span="12">
-          <a-form-item label="标题" name="title">
+          <a-form-item
+            label="标题"
+            name="title"
+            :rules="[{ max: 100, message: '标题不能超过100个字符' }]"
+          >
             <a-input
               v-model:value="formData.content.title"
               placeholder="请输入页面标题"
@@ -38,7 +72,11 @@
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label="描述" name="description">
+          <a-form-item
+            label="描述"
+            name="description"
+            :rules="[{ max: 200, message: '描述不能超过200个字符' }]"
+          >
             <a-input
               v-model:value="formData.content.description"
               placeholder="请输入页面描述"
@@ -52,7 +90,11 @@
         <a-divider>主页信息</a-divider>
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="头像URL" name="avatar">
+            <a-form-item
+              label="头像URL"
+              name="avatar"
+              :rules="[{ type: 'url', message: '请输入有效的URL地址' }]"
+            >
               <a-input
                 v-model:value="formData.content.avatar"
                 placeholder="请输入头像URL"
@@ -60,7 +102,11 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="姓名" name="name">
+            <a-form-item
+              label="姓名"
+              name="name"
+              :rules="[{ max: 50, message: '姓名不能超过50个字符' }]"
+            >
               <a-input
                 v-model:value="formData.content.name"
                 placeholder="请输入姓名"
@@ -71,16 +117,26 @@
 
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="个人简介" name="bio">
+            <a-form-item
+              label="个人简介"
+              name="bio"
+              :rules="[{ max: 200, message: '个人简介不能超过200个字符' }]"
+            >
               <a-textarea
                 v-model:value="formData.content.bio"
                 placeholder="请输入个人简介"
                 :rows="3"
+                show-count
+                :maxlength="200"
               />
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="名言" name="quote">
+            <a-form-item
+              label="名言"
+              name="quote"
+              :rules="[{ max: 100, message: '名言不能超过100个字符' }]"
+            >
               <a-input
                 v-model:value="formData.content.quote"
                 placeholder="请输入名言"
@@ -91,7 +147,11 @@
 
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="GitHub地址" name="github">
+            <a-form-item
+              label="GitHub地址"
+              name="github"
+              :rules="[{ type: 'url', message: '请输入有效的GitHub地址' }]"
+            >
               <a-input
                 v-model:value="formData.content.github"
                 placeholder="请输入GitHub地址"
@@ -99,7 +159,11 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="博客地址" name="blog">
+            <a-form-item
+              label="博客地址"
+              name="blog"
+              :rules="[{ type: 'url', message: '请输入有效的博客地址' }]"
+            >
               <a-input
                 v-model:value="formData.content.blog"
                 placeholder="请输入博客地址"
@@ -352,10 +416,17 @@
 
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="SEO标题" name="seo_title">
+            <a-form-item
+              label="SEO标题"
+              name="seo_title"
+              :rules="[
+                { required: true, message: '请输入SEO标题' },
+                { max: 60, message: 'SEO标题不能超过60个字符' },
+              ]"
+            >
               <a-input
                 v-model:value="formData.content.seo_title"
-                placeholder="请输入SEO标题"
+                placeholder="请输入SEO标题（建议30-60个字符）"
               />
             </a-form-item>
           </a-col>
@@ -373,7 +444,11 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="Canonical URL" name="canonical_url">
+            <a-form-item
+              label="Canonical URL"
+              name="canonical_url"
+              :rules="[{ type: 'url', message: '请输入有效的规范URL' }]"
+            >
               <a-input
                 v-model:value="formData.content.canonical_url"
                 placeholder="请输入规范URL"
@@ -384,11 +459,20 @@
 
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="SEO描述" name="seo_description">
+            <a-form-item
+              label="SEO描述"
+              name="seo_description"
+              :rules="[
+                { required: true, message: '请输入SEO描述' },
+                { max: 160, message: 'SEO描述不能超过160个字符' },
+              ]"
+            >
               <a-textarea
                 v-model:value="formData.content.seo_description"
-                placeholder="请输入SEO描述"
+                placeholder="请输入SEO描述（建议120-160个字符）"
                 :rows="3"
+                show-count
+                :maxlength="160"
               />
             </a-form-item>
           </a-col>
@@ -398,7 +482,11 @@
 
         <a-row :gutter="16">
           <a-col :span="12">
-            <a-form-item label="OG标题" name="og_title">
+            <a-form-item
+              label="OG标题"
+              name="og_title"
+              :rules="[{ max: 60, message: 'Open Graph标题不能超过60个字符' }]"
+            >
               <a-input
                 v-model:value="formData.content.og_title"
                 placeholder="请输入Open Graph标题"
@@ -422,11 +510,19 @@
 
         <a-row :gutter="16">
           <a-col :span="24">
-            <a-form-item label="OG描述" name="og_description">
+            <a-form-item
+              label="OG描述"
+              name="og_description"
+              :rules="[
+                { max: 160, message: 'Open Graph描述不能超过160个字符' },
+              ]"
+            >
               <a-textarea
                 v-model:value="formData.content.og_description"
                 placeholder="请输入Open Graph描述"
                 :rows="3"
+                show-count
+                :maxlength="160"
               />
             </a-form-item>
           </a-col>
@@ -494,8 +590,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, nextTick } from "vue";
+import { ref, reactive, watch, nextTick, computed } from "vue";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { Icon } from "@iconify/vue";
 import PhotoSelect from "@/components/PhotoSelect/index.vue";
 import type { ConfigReq, Content } from "@/types/config";
 
@@ -503,6 +600,7 @@ interface Props {
   open: boolean;
   config?: any;
   loading?: boolean;
+  existingConfigs?: any[];
 }
 
 interface Emits {
@@ -515,6 +613,7 @@ const props = withDefaults(defineProps<Props>(), {
   open: false,
   config: null,
   loading: false,
+  existingConfigs: () => [],
 });
 
 const emit = defineEmits<Emits>();
@@ -533,27 +632,201 @@ const formData = reactive<ConfigReq>({
   } as Content,
 });
 
+// 已存在的配置类型列表
+const existingConfigTypes = computed(() => {
+  return props.existingConfigs?.map(config => config.type) || [];
+});
+
 const rules = {
   type: [{ required: true, message: "请选择页面类型" }],
   content: [
-    { required: true, message: "页面内容不能为空" },
     {
-      validator: (_rule: any, value: any, callback: any) => {
-        // 通用验证
-        if (!value || !value.title || value.title.trim() === "") {
+      validator: (_rule: any, value: any) => {
+        // 通用验证 - 标题和描述的必填校验
+        if (!value) {
+          return Promise.reject("页面内容不能为空");
+        }
+        if (!value.title || value.title.trim() === "") {
           return Promise.reject("请输入标题");
         }
         if (!value.description || value.description.trim() === "") {
           return Promise.reject("请输入描述");
         }
 
-        // SEO配置特有的验证
-        if (formData.value.type === "seo") {
+        // 根据配置类型进行特有验证
+        const configType = formData.value.type;
+
+        if (configType === "home") {
+          // 主页配置验证
+          if (value.name && value.name.trim().length > 50) {
+            return Promise.reject("姓名不能超过50个字符");
+          }
+          if (value.bio && value.bio.trim().length > 200) {
+            return Promise.reject("个人简介不能超过200个字符");
+          }
+          if (value.quote && value.quote.trim().length > 100) {
+            return Promise.reject("名言不能超过100个字符");
+          }
+
+          // URL格式验证
+          if (value.avatar && !isValidUrl(value.avatar)) {
+            return Promise.reject("头像URL格式不正确");
+          }
+          if (value.github && !isValidUrl(value.github)) {
+            return Promise.reject("GitHub地址格式不正确");
+          }
+          if (value.blog && !isValidUrl(value.blog)) {
+            return Promise.reject("博客地址格式不正确");
+          }
+
+          // 技术栈验证
+          if (value.tech_stacks && value.tech_stacks.length > 20) {
+            return Promise.reject("技术栈数量不能超过20个");
+          }
+
+          // 开源项目验证
+          if (value.repositories) {
+            for (let i = 0; i < value.repositories.length; i++) {
+              const repo = value.repositories[i];
+              if (!repo.name || repo.name.trim() === "") {
+                return Promise.reject(`第${i + 1}个开源项目的名称不能为空`);
+              }
+              if (!repo.url || !isValidUrl(repo.url)) {
+                return Promise.reject(`第${i + 1}个开源项目的地址格式不正确`);
+              }
+              if (repo.name.length > 50) {
+                return Promise.reject(
+                  `第${i + 1}个开源项目的名称不能超过50个字符`
+                );
+              }
+              if (repo.desc && repo.desc.length > 100) {
+                return Promise.reject(
+                  `第${i + 1}个开源项目的描述不能超过100个字符`
+                );
+              }
+            }
+          }
+
+          // 文章数量验证
+          if (
+            value.recent_posts_count &&
+            (value.recent_posts_count < 1 || value.recent_posts_count > 10)
+          ) {
+            return Promise.reject("最近文章数量必须在1-10之间");
+          }
+        } else if (configType === "about") {
+          // 关于页配置验证
+          if (value.interests && value.interests.length > 15) {
+            return Promise.reject("兴趣爱好数量不能超过15个");
+          }
+
+          // 技能验证
+          if (value.skills) {
+            for (let i = 0; i < value.skills.length; i++) {
+              const skill = value.skills[i];
+              if (!skill.category || skill.category.trim() === "") {
+                return Promise.reject(`第${i + 1}个技能分类的名称不能为空`);
+              }
+              if (skill.category.length > 30) {
+                return Promise.reject(
+                  `第${i + 1}个技能分类的名称不能超过30个字符`
+                );
+              }
+              if (!skill.items || skill.items.length === 0) {
+                return Promise.reject(
+                  `第${i + 1}个技能分类必须至少包含一个技能`
+                );
+              }
+              if (skill.items.length > 10) {
+                return Promise.reject(
+                  `第${i + 1}个技能分类的技能数量不能超过10个`
+                );
+              }
+            }
+          }
+
+          // 时间线验证
+          if (value.timeline) {
+            for (let i = 0; i < value.timeline.length; i++) {
+              const item = value.timeline[i];
+              if (!item.year || item.year.trim() === "") {
+                return Promise.reject(`第${i + 1}个时间线项目的年份不能为空`);
+              }
+              if (!item.title || item.title.trim() === "") {
+                return Promise.reject(`第${i + 1}个时间线项目的标题不能为空`);
+              }
+              if (item.title.length > 50) {
+                return Promise.reject(
+                  `第${i + 1}个时间线项目的标题不能超过50个字符`
+                );
+              }
+              if (item.desc && item.desc.length > 200) {
+                return Promise.reject(
+                  `第${i + 1}个时间线项目的描述不能超过200个字符`
+                );
+              }
+            }
+          }
+
+          // 专注事项验证
+          if (value.focus_items) {
+            for (let i = 0; i < value.focus_items.length; i++) {
+              const item = value.focus_items[i];
+              if (!item || item.trim() === "") {
+                return Promise.reject(`第${i + 1}个专注事项不能为空`);
+              }
+              if (item.length > 100) {
+                return Promise.reject(`第${i + 1}个专注事项不能超过100个字符`);
+              }
+            }
+          }
+        } else if (configType === "seo") {
+          // SEO配置验证
           if (!value.seo_title || value.seo_title.trim() === "") {
             return Promise.reject("请输入SEO标题");
           }
           if (!value.seo_description || value.seo_description.trim() === "") {
             return Promise.reject("请输入SEO描述");
+          }
+
+          // 长度验证
+          if (value.seo_title.length > 60) {
+            return Promise.reject("SEO标题不能超过60个字符");
+          }
+          if (value.seo_description.length > 160) {
+            return Promise.reject("SEO描述不能超过160个字符");
+          }
+
+          // 关键词验证
+          if (value.seo_keywords && value.seo_keywords.length > 10) {
+            return Promise.reject("SEO关键词数量不能超过10个");
+          }
+          if (value.seo_keywords) {
+            for (let i = 0; i < value.seo_keywords.length; i++) {
+              const keyword = value.seo_keywords[i];
+              if (!keyword || keyword.trim() === "") {
+                return Promise.reject(`第${i + 1}个关键词不能为空`);
+              }
+              if (keyword.length > 20) {
+                return Promise.reject(`第${i + 1}个关键词不能超过20个字符`);
+              }
+            }
+          }
+
+          // URL格式验证
+          if (value.canonical_url && !isValidUrl(value.canonical_url)) {
+            return Promise.reject("规范URL格式不正确");
+          }
+          if (value.og_image && !isValidUrl(value.og_image)) {
+            return Promise.reject("Open Graph图片URL格式不正确");
+          }
+
+          // Open Graph验证
+          if (value.og_title && value.og_title.length > 60) {
+            return Promise.reject("Open Graph标题不能超过60个字符");
+          }
+          if (value.og_description && value.og_description.length > 160) {
+            return Promise.reject("Open Graph描述不能超过160个字符");
           }
         }
 
@@ -561,6 +834,16 @@ const rules = {
       },
     },
   ],
+};
+
+// URL格式验证函数
+const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 // 监听visible变化
@@ -575,9 +858,16 @@ watch(
         Object.assign(formData, props.config);
       } else {
         isEdit.value = false;
+        // 选择第一个可用的配置类型
+        const availableTypes = ["home", "about", "seo"].filter(
+          type => !existingConfigTypes.value.includes(type)
+        );
+        const defaultType =
+          availableTypes.length > 0 ? availableTypes[0] : "home";
+
         // 重置表单
         Object.assign(formData, {
-          type: "home",
+          type: defaultType,
           content: {
             title: "",
             description: "",
