@@ -1,7 +1,7 @@
 // 网站配置请求类型
 export interface ConfigReq {
   id?: string;
-  type: "home" | "about";
+  type: "home" | "about" | "seo";
   content: Content;
 }
 
@@ -29,6 +29,17 @@ export interface Content {
   timeline?: Timeline[];
   interests?: string[];
   focus_items?: string[];
+
+  // SEO配置
+  seo_title?: string;
+  seo_keywords?: string[];
+  seo_description?: string;
+  robots_meta?: string;
+  canonical_url?: string;
+  og_title?: string;
+  og_description?: string;
+  og_image?: string;
+  twitter_card?: string;
 }
 
 // 开源项目
@@ -56,14 +67,14 @@ export interface ConfigVO {
   id: string;
   created_at: string;
   updated_at: string;
-  type: "home" | "about";
+  type: "home" | "about" | "seo";
   content: Content;
 }
 
 // 网站配置摘要VO
 export interface ConfigSummaryVO {
   id: string;
-  type: "home" | "about";
+  type: "home" | "about" | "seo";
   title: string;
   updated_at: string;
 }

@@ -26,10 +26,30 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="text-lg font-medium">
-              {{ config.type === "home" ? "主页设置" : "关于页设置" }}
+              {{
+                config.type === "home"
+                  ? "主页设置"
+                  : config.type === "about"
+                    ? "关于页设置"
+                    : "SEO设置"
+              }}
             </div>
-            <a-tag :color="config.type === 'home' ? 'blue' : 'green'">
-              {{ config.type === "home" ? "主页" : "关于页面" }}
+            <a-tag
+              :color="
+                config.type === 'home'
+                  ? 'blue'
+                  : config.type === 'about'
+                    ? 'green'
+                    : 'orange'
+              "
+            >
+              {{
+                config.type === "home"
+                  ? "主页"
+                  : config.type === "about"
+                    ? "关于页面"
+                    : "SEO"
+              }}
             </a-tag>
             <span class="text-sm text-gray-500">{{
               formatTime(config.updated_at)
