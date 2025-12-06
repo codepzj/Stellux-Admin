@@ -56,6 +56,7 @@
   </a-card>
 </template>
 <script setup lang="ts">
+// @ts-ignore
 import PhotoWall from "@/components/PhotoWall/index.vue";
 import Uploader from "@/components/Uploader/index.vue";
 import { deleteFilesByIdListAPI, queryFileList } from "@/api/file";

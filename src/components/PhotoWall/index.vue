@@ -81,14 +81,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, watch } from "vue";
+<script lang="ts" setup>
+import { ref, computed, watch } from "vue";
 import type { FileVO } from "@/types/file";
 import { API_BASE_URL } from "@/constant";
 import { Icon } from "@iconify/vue";
-
-export default defineComponent({
-  setup() {
 
 // Props & Emits
 const props = defineProps<{

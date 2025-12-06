@@ -36,6 +36,7 @@
 
 <script lang="ts" setup>
 import { queryFileList } from "@/api/file";
+// @ts-ignore
 import PhotoWall from "@/components/PhotoWall/index.vue";
 import type { PageData } from "@/types/dto";
 import type { FileVO } from "@/types/file";
