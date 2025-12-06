@@ -24,7 +24,7 @@
       <div
         v-for="photo in photosWall"
         :key="photo.url"
-        class="relative w-full aspect-[16/9] overflow-hidden rounded-md"
+        class="relative w-full aspect-video overflow-hidden rounded-md"
         @click="handleClick(photo.url)"
         @dblclick.stop="handlePreview(photo)"
       >
@@ -52,7 +52,7 @@
     </div>
 
     <div v-else>
-      <a-empty class="!mt-40" description="暂无图片" />
+      <a-empty class="mt-40!" description="暂无图片" />
     </div>
 
     <!-- 预览弹窗 -->
@@ -81,11 +81,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed, watch } from "vue";
+<script lang="ts">
+import { defineComponent, ref, computed, watch } from "vue";
 import type { FileVO } from "@/types/file";
 import { API_BASE_URL } from "@/constant";
 import { Icon } from "@iconify/vue";
+
+export default defineComponent({
+  setup() {
 
 // Props & Emits
 const props = defineProps<{

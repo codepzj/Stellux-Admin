@@ -3,7 +3,7 @@
     <PhotoWall
       :list="page.list"
       type="display"
-      @selected-photos="photos => (selectedPhotos = photos)"
+      @selected-photos="(photos: string[]) => (selectedPhotos = photos)"
     >
       <template #left>
         <a-button
