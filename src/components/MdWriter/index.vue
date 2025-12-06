@@ -60,9 +60,26 @@ const handleSelectedPicture = (picture: string) => {
   height: calc(100vh - 200px);
 
   :deep(.v-md-editor) {
-    box-shadow: 1px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
     flex: 1;
+
+    // 减小工具栏悬浮效果
+    .v-md-editor__toolbar {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    // 减小目录导航悬浮效果
+    .v-md-editor__toc-nav {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    // 移除其他悬浮元素的效果
+    .v-md-editor__preview,
+    .v-md-editor__textarea {
+      box-shadow: none !important;
+    }
   }
 }
 </style>
