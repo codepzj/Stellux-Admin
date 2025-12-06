@@ -20,6 +20,7 @@
             >
               <a-select-option value="home">主页设置</a-select-option>
               <a-select-option value="about">关于页设置</a-select-option>
+              <a-select-option value="seo">SEO设置</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
@@ -344,13 +345,158 @@
           </div>
         </a-form-item>
       </template>
+
+      <!-- SEO配置 -->
+      <template v-if="formData.type === 'seo'">
+        <a-divider>SEO配置</a-divider>
+
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="SEO标题" name="seo_title">
+              <a-input
+                v-model:value="formData.content.seo_title"
+                placeholder="请输入SEO标题"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="SEO关键词" name="seo_keywords">
+              <a-select
+                v-model:value="formData.content.seo_keywords"
+                mode="tags"
+                placeholder="请输入关键词，按回车添加"
+                :token-separators="[';']"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="Canonical URL" name="canonical_url">
+              <a-input
+                v-model:value="formData.content.canonical_url"
+                placeholder="请输入规范URL"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="SEO描述" name="seo_description">
+              <a-textarea
+                v-model:value="formData.content.seo_description"
+                placeholder="请输入SEO描述"
+                :rows="3"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-divider>Open Graph</a-divider>
+
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item label="OG标题" name="og_title">
+              <a-input
+                v-model:value="formData.content.og_title"
+                placeholder="请输入Open Graph标题"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item label="Twitter Card类型" name="twitter_card">
+              <a-select
+                v-model:value="formData.content.twitter_card"
+                placeholder="请选择Twitter Card类型"
+              >
+                <a-select-option value="summary">Summary</a-select-option>
+                <a-select-option value="summary_large_image"
+                  >Summary Large Image</a-select-option
+                >
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="OG描述" name="og_description">
+              <a-textarea
+                v-model:value="formData.content.og_description"
+                placeholder="请输入Open Graph描述"
+                :rows="3"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-gray-600 whitespace-nowrap"
+                >OG图片：</span
+              >
+              <a-input
+                v-model:value="formData.content.og_image"
+                placeholder="输入图片链接或从相册选择"
+                style="flex: 1"
+              />
+              <a-button
+                type="link"
+                size="small"
+                @click="openPhotoModal('og_image')"
+              >
+                <template #icon>
+                  <Icon icon="solar:gallery-bold-duotone" />
+                </template>
+                从相册选择
+              </a-button>
+            </div>
+          </a-col>
+        </a-row>
+
+        <a-divider>其他设置</a-divider>
+
+        <a-row :gutter="16">
+          <a-col :span="24">
+            <a-form-item label="Robots Meta" name="robots_meta">
+              <a-select
+                v-model:value="formData.content.robots_meta"
+                placeholder="请选择Robots指令"
+              >
+                <a-select-option value="index,follow"
+                  >index,follow</a-select-option
+                >
+                <a-select-option value="noindex,follow"
+                  >noindex,follow</a-select-option
+                >
+                <a-select-option value="index,nofollow"
+                  >index,nofollow</a-select-option
+                >
+                <a-select-option value="noindex,nofollow"
+                  >noindex,nofollow</a-select-option
+                >
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </template>
     </a-form>
+
+    <!-- 图片选择弹窗 -->
+    <PhotoSelect
+      v-model:open="photoSelectOpen"
+      @selected-picture="handleSelectedPicture"
+    />
   </a-modal>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch, nextTick } from "vue";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import PhotoSelect from "@/components/PhotoSelect/index.vue";
 import type { ConfigReq, Content } from "@/types/config";
 
 interface Props {
@@ -376,6 +522,8 @@ const emit = defineEmits<Emits>();
 const visible = ref(false);
 const formRef = ref();
 const isEdit = ref(false);
+const photoSelectOpen = ref(false);
+const currentPhotoField = ref<string>("");
 
 const formData = reactive<ConfigReq>({
   type: "home",
@@ -390,13 +538,25 @@ const rules = {
   content: [
     { required: true, message: "页面内容不能为空" },
     {
-      validator: (_rule: any, value: any) => {
+      validator: (_rule: any, value: any, callback: any) => {
+        // 通用验证
         if (!value || !value.title || value.title.trim() === "") {
           return Promise.reject("请输入标题");
         }
         if (!value.description || value.description.trim() === "") {
           return Promise.reject("请输入描述");
         }
+
+        // SEO配置特有的验证
+        if (formData.value.type === "seo") {
+          if (!value.seo_title || value.seo_title.trim() === "") {
+            return Promise.reject("请输入SEO标题");
+          }
+          if (!value.seo_description || value.seo_description.trim() === "") {
+            return Promise.reject("请输入SEO描述");
+          }
+        }
+
         return Promise.resolve();
       },
     },
@@ -507,6 +667,22 @@ const handleOk = async () => {
   } catch (error) {
     console.error("表单验证失败:", error);
   }
+};
+
+// 打开图片选择模态框
+const openPhotoModal = (field: string) => {
+  currentPhotoField.value = field;
+  photoSelectOpen.value = true;
+};
+
+// 处理选择的图片
+const handleSelectedPicture = (picture: string) => {
+  if (!picture || !currentPhotoField.value) return;
+
+  if (currentPhotoField.value === "og_image") {
+    formData.content.og_image = picture;
+  }
+  currentPhotoField.value = "";
 };
 
 // 取消
