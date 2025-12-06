@@ -21,6 +21,7 @@ export interface Content {
   tech_stacks?: string[];
   repositories?: Repo[];
   quote?: string;
+  motto?: string;
   show_recent_posts?: boolean;
   recent_posts_count?: number;
   motto?: string;
