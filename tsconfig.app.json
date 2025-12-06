@@ -11,9 +11,7 @@
     // 配置@别名
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"],
     }
   },
   "include": [
@@ -23,7 +21,5 @@
     "src/shims-vue.d.ts",
     "./auto-imports.d.ts", // 自动导入vue,vue-router,pinia
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"],
 }
