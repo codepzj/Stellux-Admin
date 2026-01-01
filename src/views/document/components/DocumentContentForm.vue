@@ -79,11 +79,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, onMounted, nextTick } from "vue";
 import type { FormInstance, TreeProps } from "ant-design-vue";
 import type {
   DocumentContentRequest,
   DocumentContentVO,
+  DocumentTreeVO,
 } from "@/types/document";
 import { createDocumentContentAPI } from "@/api/document";
 
@@ -93,9 +94,21 @@ const props = defineProps<{
   parent_id?: string;
   is_dir?: boolean; // 预设类型
   parent_tree_data?: TreeProps["treeData"]; // 父级目录树数据
+  doc_tree_data?: DocumentTreeVO[]; // 文档树数据，用于计算排序
 }>();
 
 const formRef = ref<FormInstance>();
+
+// 初始化排序值
+const getInitialSort = (parentId: string): number => {
+  if (!props.doc_tree_data || !parentId) {
+    return 1;
+  }
+  const count = props.doc_tree_data.filter(
+    item => item.parent_id === parentId
+  ).length;
+  return count + 1;
+};
 
 const formData = reactive<DocumentContentRequest & { id?: string }>({
   id: "",
@@ -104,9 +117,9 @@ const formData = reactive<DocumentContentRequest & { id?: string }>({
   content: "",
   description: "",
   alias: "",
-  parent_id: props.document_id,
+  parent_id: props.parent_id || props.document_id,
   is_dir: props.is_dir || false,
-  sort: 1,
+  sort: getInitialSort(props.parent_id || props.document_id),
 });
 
 const checkAlias = (_rule: any, value: string) => {
@@ -143,9 +156,57 @@ const rules = {
   document_id: [{ required: true, message: "文档Id不能为空", trigger: "blur" }],
 };
 
+// 计算父级目录下的文档数量
+const getChildrenCountByParentId = (parentId: string): number => {
+  if (!props.doc_tree_data || !parentId) {
+    console.log("计算排序值 - doc_tree_data 或 parentId 为空", {
+      doc_tree_data: props.doc_tree_data,
+      parentId,
+    });
+    return 0;
+  }
+  // 过滤出所有 parent_id 等于指定 parentId 的文档
+  const children = props.doc_tree_data.filter(
+    item => item.parent_id === parentId
+  );
+  console.log("计算排序值", {
+    parentId,
+    childrenCount: children.length,
+    children: children.map(c => ({ id: c.id, title: c.title })),
+  });
+  return children.length;
+};
+
+// 更新排序值的方法，供外部调用
+const updateSortValue = () => {
+  if (formData.parent_id && !formData.id) {
+    // 只有在新增模式下才自动更新排序值
+    const count = getChildrenCountByParentId(formData.parent_id);
+    formData.sort = count + 1;
+    console.log("更新排序值", {
+      parent_id: formData.parent_id,
+      count,
+      sort: formData.sort,
+    });
+  }
+};
+
 // 监听父级目录变化
 const onSelectChange = (value: string) => {
   formData.parent_id = value;
+  // 当父级目录改变时，自动更新排序值为该目录下已有文档数量 + 1
+  if (value && !formData.id) {
+    // 使用 nextTick 确保数据已经准备好
+    nextTick(() => {
+      const count = getChildrenCountByParentId(value);
+      formData.sort = count + 1;
+      console.log("父级目录变化，更新排序值", {
+        parent_id: value,
+        count,
+        sort: formData.sort,
+      });
+    });
+  }
 };
 
 // 监听文档内容变化，用于编辑模式
@@ -183,10 +244,16 @@ watch(
 watch(
   () => props.parent_id,
   newParentId => {
-    console.log(newParentId);
-    if (newParentId) {
+    console.log("props.parent_id 变化", newParentId);
+    if (newParentId && !formData.id) {
+      // 只有在新增模式下才自动更新排序值
       formData.parent_id = newParentId;
-      console.log(formData);
+      // 使用 nextTick 确保数据已经准备好
+      nextTick(() => {
+        updateSortValue();
+      });
+    } else if (newParentId) {
+      formData.parent_id = newParentId;
     }
   },
   { immediate: true }
@@ -201,8 +268,39 @@ watch(
   { immediate: true }
 );
 
+// 监听文档树数据变化，当数据更新时重新计算排序值
+watch(
+  () => props.doc_tree_data,
+  () => {
+    updateSortValue();
+  },
+  { deep: true, immediate: false }
+);
+
+// 监听 parent_id 和 doc_tree_data 同时变化
+watch(
+  [() => props.parent_id, () => props.doc_tree_data],
+  ([newParentId, newDocTreeData]) => {
+    if (newParentId && newDocTreeData && !formData.id) {
+      // 使用 nextTick 确保数据已经更新
+      nextTick(() => {
+        updateSortValue();
+      });
+    }
+  },
+  { immediate: false }
+);
+
 onMounted(() => {
-  console.log(props);
+  console.log("DocumentContentForm mounted", {
+    props,
+    formData,
+    doc_tree_data_length: props.doc_tree_data?.length,
+  });
+  // 初始化时计算排序值，使用 nextTick 确保数据已经准备好
+  nextTick(() => {
+    updateSortValue();
+  });
 });
 
 // 提交表单
@@ -225,9 +323,12 @@ const resetFields = () => {
   formData.content = "";
   formData.description = "";
   formData.alias = "";
-  formData.parent_id = props.parent_id || props.document_id;
+  const parentId = props.parent_id || props.document_id;
+  formData.parent_id = parentId;
   formData.is_dir = false;
-  formData.sort = 1;
+  // 重置时也根据父级目录计算排序值
+  const count = getChildrenCountByParentId(parentId);
+  formData.sort = count + 1;
 };
 
 // 暴露方法给父组件
@@ -235,6 +336,7 @@ defineExpose({
   submit,
   resetFields,
   formData,
+  updateSortValue,
 });
 </script>
 

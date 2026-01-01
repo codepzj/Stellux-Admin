@@ -67,6 +67,13 @@ export const getDocumentBinListAPI = (
   return request.get("/admin-api/document/bin-list", { params });
 };
 
+// 获取文档内容回收箱列表
+export const getDocumentContentBinListAPI = (
+  params: any
+): Promise<PageResponse<DocumentContentVO>> => {
+  return request.get("/admin-api/document-content/bin-list", { params });
+};
+
 // 创建文档内容
 export const createDocumentContentAPI = (
   data: DocumentContentRequest

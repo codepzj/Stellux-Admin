@@ -23,6 +23,7 @@ export interface Content {
   quote?: string;
   show_recent_posts?: boolean;
   recent_posts_count?: number;
+  show_repositories?: boolean;
   motto?: string;
 
   // About页面配置

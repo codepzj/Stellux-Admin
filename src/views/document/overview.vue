@@ -2,7 +2,9 @@
   <a-card class="h-full overflow-y-auto">
     <div class="flex justify-end gap-2">
       <a-button @click="$router.push({ name: 'DocumentBin' })">回收箱</a-button>
-      <a-button type="primary" @click="showModal = true">新增文档</a-button>
+      <a-button type="primary" @click="handleOpenCreateModal"
+        >新增文档</a-button
+      >
     </div>
     <a-skeleton :loading="loading" active>
       <div class="py-4">
@@ -256,6 +258,7 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
 import PhotoSelect from "@/components/PhotoSelect/index.vue";
 import type { FormInstance } from "ant-design-vue";
 import { Icon } from "@iconify/vue";
+import { watch } from "vue";
 
 const docList = ref<DocumentRootVO[]>([]);
 const showModal = ref(false);
@@ -367,6 +370,14 @@ const handleSoftDelete = async (id: string) => {
   message.success("文档软删除成功");
 };
 
+// 打开新增文档弹窗
+const handleOpenCreateModal = () => {
+  // 根据当前已有的根文档数量自动设置排序值
+  const count = docList.value.length;
+  createDoc.value.sort = count + 1;
+  showModal.value = true;
+};
+
 // 清空新增文档
 const clearCreateDoc = () => {
   createDoc.value.title = "";
@@ -427,6 +438,15 @@ const handleEditCancel = () => {
   clearEditDoc();
   editModalOpen.value = false;
 };
+
+// 监听弹窗打开，自动更新排序值
+watch(showModal, isOpen => {
+  if (isOpen) {
+    // 根据当前已有的根文档数量自动设置排序值
+    const count = docList.value.length;
+    createDoc.value.sort = count + 1;
+  }
+});
 
 onMounted(getAllDoc);
 </script>

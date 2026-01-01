@@ -1,7 +1,7 @@
 <template>
-  <a-card class="h-full">
+  <a-card class="h-full overflow-y-auto">
     <!-- 表格与操作区域 -->
-    <a-page-header class="!px-0">
+    <a-page-header class="px-0!">
       <div class="flex justify-between">
         <a-button type="primary" @click="onHandleCreate">新增</a-button>
       </div>
@@ -302,3 +302,5 @@ onMounted(async () => {
   await getFriendList();
 });
 </script>
+
+<style scoped lang="scss"></style>

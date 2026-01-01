@@ -1,120 +1,190 @@
 <template>
-  <a-card class="h-full">
-    <a-page-header title="网站设置" class="px-0!">
-      <template #extra>
-        <a-button type="primary" @click="handleCreate">
-          <template #icon>
-            <PlusOutlined />
-          </template>
-          新建
-        </a-button>
-      </template>
-    </a-page-header>
+  <a-card class="h-full overflow-y-auto">
+    <a-page-header title="网站设置" class="px-0!" />
 
     <!-- 加载状态 -->
     <div v-if="loading" class="flex justify-center py-12">
       <a-spin size="large" />
     </div>
 
-    <!-- 设置列表 -->
-    <div v-else class="space-y-4">
-      <div
-        v-for="config in pageConfigs"
-        :key="config.id"
-        class="bg-white border border-gray-200 rounded-lg p-4"
-      >
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="text-lg font-medium">
-              {{
-                config.type === "home"
-                  ? "主页设置"
-                  : config.type === "about"
-                    ? "关于页设置"
-                    : "SEO设置"
-              }}
-            </div>
-            <a-tag
-              :color="
-                config.type === 'home'
-                  ? 'blue'
-                  : config.type === 'about'
-                    ? 'green'
-                    : 'orange'
-              "
-            >
-              {{
-                config.type === "home"
-                  ? "主页"
-                  : config.type === "about"
-                    ? "关于页面"
-                    : "SEO"
-              }}
-            </a-tag>
-            <span class="text-sm text-gray-500">{{
-              formatTime(config.updated_at)
-            }}</span>
+    <!-- 设置 Tab 内容 -->
+    <a-tabs v-else v-model:activeKey="activeKey" @change="handleTabChange">
+      <a-tab-pane key="home" tab="主页设置">
+        <PageConfigForm
+          ref="homeFormRef"
+          :config-type="'home'"
+          :config="configs.home"
+          @update:config="handleConfigUpdate('home', $event)"
+        />
+        <div
+          class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between"
+        >
+          <div class="text-sm text-gray-500">
+            <span v-if="configs.home?.updated_at">
+              最后更新：{{ formatTime(configs.home.updated_at) }}
+            </span>
+            <span v-else class="text-gray-400">尚未创建</span>
           </div>
-          <div class="flex gap-2">
-            <a-button size="small" @click="handleEdit(config)">编辑</a-button>
-            <a-popconfirm
-              title="确定要删除这个设置吗？"
-              ok-text="确定"
-              cancel-text="取消"
-              @confirm="handleDelete(config.id)"
-            >
-              <a-button size="small" danger>删除</a-button>
-            </a-popconfirm>
-          </div>
+          <a-button
+            type="primary"
+            :loading="saving.home"
+            @click="handleSave('home')"
+          >
+            保存主页设置
+          </a-button>
         </div>
-      </div>
-    </div>
+      </a-tab-pane>
 
-    <!-- 空状态 -->
-    <div v-if="!loading && pageConfigs.length === 0" class="text-center py-12">
-      <p class="text-gray-500">暂无设置</p>
-    </div>
+      <a-tab-pane key="about" tab="关于页设置">
+        <PageConfigForm
+          ref="aboutFormRef"
+          :config-type="'about'"
+          :config="configs.about"
+          @update:config="handleConfigUpdate('about', $event)"
+        />
+        <div
+          class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between"
+        >
+          <div class="text-sm text-gray-500">
+            <span v-if="configs.about?.updated_at">
+              最后更新：{{ formatTime(configs.about.updated_at) }}
+            </span>
+            <span v-else class="text-gray-400">尚未创建</span>
+          </div>
+          <a-button
+            type="primary"
+            :loading="saving.about"
+            @click="handleSave('about')"
+          >
+            保存关于页设置
+          </a-button>
+        </div>
+      </a-tab-pane>
 
-    <!-- 编辑模态框 -->
-    <PageConfigModal
-      v-model:open="modalVisible"
-      :config="currentConfig"
-      :loading="modalLoading"
-      :existing-configs="pageConfigs"
-      @ok="handleModalOk"
-      @cancel="handleModalCancel"
-    />
+      <a-tab-pane key="seo" tab="SEO设置">
+        <PageConfigForm
+          ref="seoFormRef"
+          :config-type="'seo'"
+          :config="configs.seo"
+          @update:config="handleConfigUpdate('seo', $event)"
+        />
+        <div
+          class="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between"
+        >
+          <div class="text-sm text-gray-500">
+            <span v-if="configs.seo?.updated_at">
+              最后更新：{{ formatTime(configs.seo.updated_at) }}
+            </span>
+            <span v-else class="text-gray-400">尚未创建</span>
+          </div>
+          <a-button
+            type="primary"
+            :loading="saving.seo"
+            @click="handleSave('seo')"
+          >
+            保存SEO设置
+          </a-button>
+        </div>
+      </a-tab-pane>
+    </a-tabs>
   </a-card>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { message } from "ant-design-vue";
-import { PlusOutlined } from "@ant-design/icons-vue";
-import type { ConfigReq, ConfigSummaryVO } from "@/types/config";
+import type { ConfigReq, ConfigVO } from "@/types/config";
 import {
   getConfigListAPI,
   getConfigByIdAPI,
   createConfigAPI,
   updateConfigAPI,
-  deleteConfigAPI,
 } from "@/api/config";
-import PageConfigModal from "./components/PageConfigModal.vue";
+import PageConfigForm from "./components/PageConfigForm.vue";
 import { formatTime } from "@/utils/time";
 
-const loading = ref(false);
-const modalVisible = ref(false);
-const modalLoading = ref(false);
-const currentConfig = ref<any>(null);
-const pageConfigs = ref<ConfigSummaryVO[]>([]);
+type ConfigType = "home" | "about" | "seo";
 
-// 获取网站设置列表
-const fetchPageConfigs = async () => {
+const loading = ref(false);
+const activeKey = ref<ConfigType>("home");
+const saving = reactive({
+  home: false,
+  about: false,
+  seo: false,
+});
+
+// 存储各类型的配置
+const configs = reactive<{
+  home: ConfigVO | null;
+  about: ConfigVO | null;
+  seo: ConfigVO | null;
+}>({
+  home: null,
+  about: null,
+  seo: null,
+});
+
+// 存储当前编辑的配置（用于保存）
+const currentConfigs = reactive<{
+  home: ConfigReq | null;
+  about: ConfigReq | null;
+  seo: ConfigReq | null;
+}>({
+  home: null,
+  about: null,
+  seo: null,
+});
+
+// 表单引用
+const homeFormRef = ref();
+const aboutFormRef = ref();
+const seoFormRef = ref();
+
+// 获取所有配置
+const fetchAllConfigs = async () => {
   try {
     loading.value = true;
     const res = await getConfigListAPI();
     if (res.code === 200) {
-      pageConfigs.value = res.data || [];
+      const configList = res.data || [];
+
+      // 重置配置
+      configs.home = null;
+      configs.about = null;
+      configs.seo = null;
+      currentConfigs.home = null;
+      currentConfigs.about = null;
+      currentConfigs.seo = null;
+
+      // 按类型分类存储
+      for (const summary of configList) {
+        const detailRes = await getConfigByIdAPI(summary.id);
+        if (detailRes.code === 200 && detailRes.data) {
+          const type = detailRes.data.type;
+          if (type === "home") {
+            configs.home = detailRes.data;
+            currentConfigs.home = {
+              id: detailRes.data.id,
+              type: detailRes.data.type,
+              content: detailRes.data.content,
+            };
+          } else if (type === "about") {
+            configs.about = detailRes.data;
+            currentConfigs.about = {
+              id: detailRes.data.id,
+              type: detailRes.data.type,
+              content: detailRes.data.content,
+            };
+          } else if (type === "seo") {
+            configs.seo = detailRes.data;
+            currentConfigs.seo = {
+              id: detailRes.data.id,
+              type: detailRes.data.type,
+              content: detailRes.data.content,
+            };
+          }
+        }
+      }
     } else {
       message.error(res.msg || "获取网站设置失败");
     }
@@ -126,87 +196,80 @@ const fetchPageConfigs = async () => {
   }
 };
 
-// 创建网站设置
-const handleCreate = () => {
-  currentConfig.value = null;
-  modalVisible.value = true;
+// Tab 切换处理
+const handleTabChange = (key: string) => {
+  activeKey.value = key as ConfigType;
+  // 如果切换到某个 Tab 且该配置不存在，可以在这里初始化
+  // 但通常在表单组件中处理会更好
 };
 
-// 编辑配置
-const handleEdit = async (record: ConfigSummaryVO) => {
+// 配置更新处理
+const handleConfigUpdate = (type: ConfigType, config: ConfigReq) => {
+  currentConfigs[type] = config;
+};
+
+// 保存配置
+const handleSave = async (type: ConfigType) => {
+  const formRef =
+    type === "home"
+      ? homeFormRef.value
+      : type === "about"
+        ? aboutFormRef.value
+        : seoFormRef.value;
+
+  if (!formRef) return;
+
   try {
-    modalLoading.value = true;
-    const res = await getConfigByIdAPI(record.id);
-    if (res.code === 200) {
-      currentConfig.value = res.data;
-      modalVisible.value = true;
-    } else {
-      message.error(res.msg || "获取配置详情失败");
+    // 验证表单
+    await formRef.validate();
+
+    const config = currentConfigs[type];
+    if (!config) {
+      message.error("配置数据不存在，请刷新页面重试");
+      return;
     }
-  } catch (error) {
-    console.error("获取配置详情失败:", error);
-    message.error("获取配置详情失败");
-  } finally {
-    modalLoading.value = false;
-  }
-};
 
-// 删除网站设置
-const handleDelete = async (id: string) => {
-  try {
-    const res = await deleteConfigAPI(id);
-    if (res.code === 200) {
-      message.success(res.msg || "删除成功");
-      await fetchPageConfigs();
-    } else {
-      message.error(res.msg || "删除失败");
-    }
-  } catch (error) {
-    console.error("删除失败:", error);
-    message.error("删除失败");
-  }
-};
+    saving[type] = true;
 
-// 模态框确认
-const handleModalOk = async (config: ConfigReq) => {
-  try {
-    modalLoading.value = true;
     let res;
-    if (currentConfig.value?.id) {
-      // 更新
+    if (config.id) {
+      // 更新现有配置
       res = await updateConfigAPI({
-        id: currentConfig.value.id,
-        ...config,
+        id: config.id,
+        type: config.type,
+        content: config.content,
       });
     } else {
-      // 创建
-      res = await createConfigAPI(config);
+      // 创建新配置
+      res = await createConfigAPI({
+        type: config.type,
+        content: config.content,
+      });
     }
 
     if (res.code === 200) {
       message.success(res.msg || "保存成功");
-      modalVisible.value = false;
-      await fetchPageConfigs();
+      // 重新获取配置列表以更新最后更新时间
+      await fetchAllConfigs();
     } else {
       message.error(res.msg || "保存失败");
     }
-  } catch (error) {
-    console.error("保存失败:", error);
-    message.error("保存失败");
+  } catch (error: any) {
+    if (error?.errorFields) {
+      // 表单验证失败
+      message.warning("请检查表单输入");
+    } else {
+      console.error("保存失败:", error);
+      message.error("保存失败");
+    }
   } finally {
-    modalLoading.value = false;
+    saving[type] = false;
   }
 };
 
-// 模态框取消
-const handleModalCancel = () => {
-  modalVisible.value = false;
-  currentConfig.value = null;
-};
-
 onMounted(() => {
-  fetchPageConfigs();
+  fetchAllConfigs();
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

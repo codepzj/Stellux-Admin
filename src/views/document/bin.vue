@@ -2,33 +2,38 @@
   <a-card class="h-full overflow-y-auto">
     <a-page-header
       :title="$route.meta.title"
-      class="!px-0"
+      class="px-0!"
       @back="() => $router.back()"
       :backIcon="false"
     >
     </a-page-header>
     <a-table :data-source="docList" :loading="loading" :columns="columns">
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'deleted_at'">
-          {{ dayjs(record.deleted_at).format("YYYY-MM-DD HH:mm:ss") }}
+        <template v-if="column.dataIndex === 'type'">
+          <a-tag :color="record.type === 'root' ? 'blue' : 'green'">
+            {{ record.type === "root" ? "根文档" : "文档内容" }}
+          </a-tag>
+        </template>
+        <template v-else-if="column.dataIndex === 'deleted_at'">
+          {{
+            record.deleted_at
+              ? dayjs(record.deleted_at).format("YYYY-MM-DD HH:mm:ss")
+              : "-"
+          }}
         </template>
         <template v-else-if="column.dataIndex === 'description'">
           <span class="text-sm text-gray-500 line-clamp-2">
-            {{ record.description }}
+            {{ record.description || "-" }}
           </span>
         </template>
-        <template v-else-if="column.dataIndex === 'thumbnail'">
-          <a-image
-            :width="80"
-            :src="record.thumbnail"
-            :fallback="ImgFallback"
-          />
-        </template>
         <template v-else-if="column.dataIndex === 'action'">
-          <a-button type="link" @click="handleRestore(record.id)"
+          <a-button type="link" @click="handleRestore(record.id, record.type)"
             >恢复</a-button
           >
-          <a-button type="link" @click="showDeleteModal(record.id)" danger
+          <a-button
+            type="link"
+            @click="showDeleteModal(record.id, record.type)"
+            danger
             >删除</a-button
           >
         </template>
@@ -60,79 +65,140 @@
 <script setup lang="ts">
 import {
   getDocumentBinListAPI,
+  getDocumentContentBinListAPI,
   restoreRootDocumentAPI,
+  restoreDocumentContentAPI,
   deleteRootDocumentAPI,
+  deleteDocumentContentAPI,
 } from "@/api/document";
-import type { DocumentRootVO } from "@/types/document";
+import type { DocumentRootVO, DocumentContentVO } from "@/types/document";
 import { onMounted, ref } from "vue";
 import dayjs from "dayjs";
-import ImgFallback from "@/assets/png/img-fallback.png";
 import { message } from "ant-design-vue";
 
 const loading = ref(false);
-const docList = ref<DocumentRootVO[]>([]);
+const docList = ref<
+  (DocumentRootVO | (DocumentContentVO & { type: "root" | "content" }))[]
+>([]);
 const deleteModalOpen = ref(false);
 const confirmDelete = ref(false);
-const deleteDocId = ref("");
+const deleteItem = ref<{ id: string; type: "root" | "content" } | null>(null);
 
 const getDocList = async () => {
   loading.value = true;
-  const res = await getDocumentBinListAPI({
-    page_no: 1,
-    page_size: 10,
-  });
+  try {
+    // 同时获取根文档和文档内容的回收箱列表
+    const [rootRes, contentRes] = await Promise.all([
+      getDocumentBinListAPI({
+        page_no: 1,
+        page_size: 100,
+      }),
+      getDocumentContentBinListAPI({
+        page_no: 1,
+        page_size: 100,
+      }),
+    ]);
 
-  docList.value = res.data.list;
-  loading.value = false;
+    // 合并两个列表，并标记类型
+    const rootDocs = rootRes.data.list.map((doc: DocumentRootVO) => ({
+      ...doc,
+      type: "root" as const,
+    }));
+    const contentDocs = contentRes.data.list.map((doc: DocumentContentVO) => ({
+      ...doc,
+      type: "content" as const,
+    }));
+
+    // 按删除时间排序
+    docList.value = [...rootDocs, ...contentDocs].sort((a, b) => {
+      const timeA = a.deleted_at ? new Date(a.deleted_at).getTime() : 0;
+      const timeB = b.deleted_at ? new Date(b.deleted_at).getTime() : 0;
+      return timeB - timeA; // 降序，最新的在前
+    });
+  } catch (error) {
+    console.error("获取回收箱列表失败:", error);
+    message.error("获取回收箱列表失败");
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 显示删除确认弹窗
-const showDeleteModal = (id: string) => {
-  deleteDocId.value = id;
+const showDeleteModal = (id: string, type: "root" | "content") => {
+  deleteItem.value = { id, type };
   deleteModalOpen.value = true;
   confirmDelete.value = false;
 };
 
 // 删除确认
 const handleDeleteConfirm = async () => {
-  await deleteRootDocumentAPI(deleteDocId.value);
-  await getDocList();
-  message.success("删除文档成功");
-  deleteModalOpen.value = false;
-  confirmDelete.value = false;
+  if (!deleteItem.value) return;
+
+  try {
+    if (deleteItem.value.type === "root") {
+      await deleteRootDocumentAPI(deleteItem.value.id);
+    } else {
+      await deleteDocumentContentAPI(deleteItem.value.id);
+    }
+    await getDocList();
+    message.success("删除成功");
+    deleteModalOpen.value = false;
+    confirmDelete.value = false;
+    deleteItem.value = null;
+  } catch (error) {
+    message.error("删除失败");
+  }
 };
 
 // 恢复文档
-const handleRestore = async (id: string) => {
-  await restoreRootDocumentAPI(id);
-  await getDocList();
-  message.success("恢复文档成功");
+const handleRestore = async (id: string, type: "root" | "content") => {
+  try {
+    if (type === "root") {
+      await restoreRootDocumentAPI(id);
+    } else {
+      await restoreDocumentContentAPI(id);
+    }
+    await getDocList();
+    message.success("恢复成功");
+  } catch (error) {
+    message.error("恢复失败");
+  }
 };
 
 const columns = ref([
   {
+    title: "类型",
+    dataIndex: "type",
+    width: 100,
+  },
+  {
     title: "标题",
     dataIndex: "title",
+    width: 200,
+    ellipsis: true,
   },
   {
     title: "别名",
     dataIndex: "alias",
+    width: 150,
+    ellipsis: true,
   },
   {
     title: "描述",
     dataIndex: "description",
-  },
-  {
-    title: "缩略图",
-    dataIndex: "thumbnail",
+    width: 300,
+    ellipsis: true,
   },
   {
     title: "删除时间",
     dataIndex: "deleted_at",
+    width: 180,
   },
   {
     title: "操作",
     dataIndex: "action",
+    width: 150,
+    fixed: "right",
   },
 ]);
 

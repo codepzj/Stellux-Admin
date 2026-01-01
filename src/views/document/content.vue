@@ -34,7 +34,7 @@
             <a-spin class="w-full mx-auto" :spinning="loading">
               <a-tree
                 v-if="treeData?.length"
-                class="!mt-4"
+                class="mt-4!"
                 v-model:expandedKeys="expandedKeys"
                 v-model:selectedKeys="selectedKeys"
                 :tree-data="treeData"
@@ -181,6 +181,7 @@
         :parent_id="createModal.parent_id"
         :is_dir="createModal.type === 'dir'"
         :parent_tree_data="getParentTreeData(treeData)"
+        :doc_tree_data="docTreeData"
       />
     </a-modal>
 
@@ -198,6 +199,7 @@
         :parent_id="createFileOrFolderModal.parent_id"
         :is_dir="createFileOrFolderModal.type === 'dir'"
         :parent_tree_data="getParentTreeData(treeData)"
+        :doc_tree_data="docTreeData"
       />
     </a-modal>
 
@@ -269,8 +271,7 @@ import DocumentContentForm from "./components/DocumentContentForm.vue";
 import DocumentEditModal from "./components/DocumentEditModal.vue";
 
 import {
-  deleteDocumentByIdListAPI,
-  deleteDocumentContentAPI,
+  softDeleteDocumentContentAPI,
   getDocumentContentByDocumentIdAPI,
   getDocumentContentAPI,
   getDocumentTreeDataAPI,
@@ -347,6 +348,10 @@ const openCreateModal = (
   createModal.input = "";
   createModal.title = type === "dir" ? "新增目录" : "新增文档";
   createModal.expandedKey = parent_id; // 新增目录时，展开父目录
+  // 弹窗打开后，更新排序值
+  nextTick(() => {
+    createFormRef.value?.updateSortValue?.();
+  });
 };
 
 const openCreateFileOrFolderModal = (
@@ -360,6 +365,10 @@ const openCreateFileOrFolderModal = (
   createFileOrFolderModal.document_id = document_id;
   createFileOrFolderModal.input = "";
   createFileOrFolderModal.title = type === "dir" ? "新增目录" : "新增文档";
+  // 弹窗打开后，更新排序值
+  nextTick(() => {
+    createFileOrFolderFormRef.value?.updateSortValue?.();
+  });
 };
 
 const handleCreate = async () => {
@@ -494,22 +503,23 @@ const showDeleteParentModal = (id: string) => {
   confirmDeleteParent.value = false;
 };
 
-// 删除文档确认
+// 删除文档确认（软删除）
 const handleDeleteLeafConfirm = async () => {
-  await deleteDocumentContentAPI(deleteLeafId.value);
+  await softDeleteDocumentContentAPI(deleteLeafId.value);
   await getDocumentTree(route.params.id as string);
   deleteLeafModalOpen.value = false;
   confirmDeleteLeaf.value = false;
   message.success("文档删除成功");
 };
 
-// 删除目录确认
+// 删除目录确认（软删除）
 const handleDeleteParentConfirm = async () => {
   const childIds = getAllChildIdByParentId(
     treeData.value,
     deleteParentId.value
   );
-  await deleteDocumentByIdListAPI(childIds);
+  // 批量软删除：并行调用单个软删除 API
+  await Promise.all(childIds.map(id => softDeleteDocumentContentAPI(id)));
   await getDocumentTree(route.params.id as string);
   deleteParentModalOpen.value = false;
   confirmDeleteParent.value = false;

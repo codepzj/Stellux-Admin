@@ -72,6 +72,7 @@ export interface DocumentContentVO {
   is_deleted: boolean;
   created_at: string;
   updated_at: string;
+  deleted_at?: string;
 }
 
 export interface DocumentTreeVO {

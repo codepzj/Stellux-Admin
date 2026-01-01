@@ -9,6 +9,7 @@
       title="选择图片"
       @ok="confirmSelectedPicture"
       @cancel="thumbnailModalOpen = false"
+      :z-index="2000"
     >
       <div class="flex justify-end my-4">
         <Uploader @close="fetchThumbnails" />
@@ -126,3 +127,22 @@ watch(thumbnailModalOpen, newVal => {
   }
 });
 </script>
+
+<style scoped lang="scss">
+// 确保选择图片弹窗的 z-index 最高，覆盖全屏编辑器
+:deep(.full-modal) {
+  z-index: 2000 !important;
+
+  .ant-modal-wrap {
+    z-index: 2000 !important;
+  }
+
+  .ant-modal-mask {
+    z-index: 2000 !important;
+  }
+
+  .ant-modal {
+    z-index: 2001 !important;
+  }
+}
+</style>
